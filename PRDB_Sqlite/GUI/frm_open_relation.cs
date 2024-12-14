@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PRDB_Sqlite.GUI
+namespace IPRDB_Sqlite.GUI
 {
     public partial class frm_open_relation : DevExpress.XtraEditors.XtraForm
     {

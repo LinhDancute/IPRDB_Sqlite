@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PRDB_Sqlite.GUI
+namespace IPRDB_Sqlite.GUI
 {
     public partial class frm_open_query : DevExpress.XtraEditors.XtraForm
     {
@@ -23,7 +23,6 @@ namespace PRDB_Sqlite.GUI
             cbo_queryname.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
             cbo_queryname.Properties.Items.AddRange(this.probDatabase.ListOfQueryNameToLower());
             cbo_queryname.SelectedIndex = 0;
-
         }
 
         private void btnOK_Click(object sender, EventArgs e)

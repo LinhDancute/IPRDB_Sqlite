@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SQLite;
 
-namespace PRDB_Sqlite.DAL
+namespace IPRDB_Sqlite.DAL
 {
     public class DataBase
     {

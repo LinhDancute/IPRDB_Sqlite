@@ -1,9 +1,9 @@
-﻿using PRDB_Sqlite.BLL;
+﻿using IPRDB_Sqlite.BLL;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace PRDB_Sqlite.DAL
+namespace IPRDB_Sqlite.DAL
 {
     public class DALProbRelation
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace PRDB_Sqlite.BLL
+namespace IPRDB_Sqlite.BLL
 {
     //Lớp này quản lý các kiểu dữ liệu khác nhau được sử dụng trong PRDB.
     //Nó xử lý các kiểu dữ liệu định nghĩa trước (ví dụ: Int16, String, Double)

@@ -1,10 +1,10 @@
-﻿using PRDB_Sqlite.BLL;
+﻿using IPRDB_Sqlite.BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace PRDB_Sqlite.GUI
+namespace IPRDB_Sqlite.GUI
 {
     public partial class frm_Delete_Scheme : DevExpress.XtraEditors.XtraForm
     {

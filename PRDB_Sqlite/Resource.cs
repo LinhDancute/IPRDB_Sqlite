@@ -1,4 +1,4 @@
-﻿namespace PRDB_Sqlite
+﻿namespace IPRDB_Sqlite
 {
     public static class Resource
     {

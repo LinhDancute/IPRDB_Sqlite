@@ -1,4 +1,4 @@
-﻿namespace PRDB_Sqlite.GUI
+﻿namespace IPRDB_Sqlite.GUI
 {
     partial class frm_Open_Scheme
     {

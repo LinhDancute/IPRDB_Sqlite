@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PRDB_Sqlite.BLL
+namespace IPRDB_Sqlite.BLL
 {
     public class SelectCondition
     {

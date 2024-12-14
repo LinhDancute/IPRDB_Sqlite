@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PRDB_Sqlite.BLL
+namespace IPRDB_Sqlite.BLL
 {
     //giữ danh sách các chiến lược (StrategyModel), danh sách các toán tử và khoảng xác suất (MaxProb và MinProb).
     public class ConditionModel

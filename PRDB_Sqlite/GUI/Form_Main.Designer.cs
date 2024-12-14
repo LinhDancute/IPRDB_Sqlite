@@ -1,4 +1,4 @@
-﻿namespace PRDB_Sqlite.GUI
+﻿namespace IPRDB_Sqlite.GUI
 {
     partial class Form_Main
     {
@@ -39,7 +39,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.ribbonControl_Tuyen_Independence = new DevExpress.XtraBars.Ribbon.RibbonControl();
-            //các nút lệnh trên ribbon để thực hiện các thao tác như tạo mới, mở, lưu, xóa, đóng cơ sở dữ liệu, lược đồ, quan hệ hoặc truy vấn.
             this.barButtonItemNewDB = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItemOpenDB = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItemSaveDB = new DevExpress.XtraBars.BarButtonItem();
@@ -64,7 +63,6 @@
             this.barButtonItemDeleteQuery = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItemExcuteQuery = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItemCloseCurrentQuery = new DevExpress.XtraBars.BarButtonItem();
-
             this.barButtonGroup1 = new DevExpress.XtraBars.BarButtonGroup();
             this.barButtonItem_Hoi_Ignor = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem_Hoi_independence = new DevExpress.XtraBars.BarButtonItem();
@@ -78,28 +76,24 @@
             this.barButtonItem_Bang_independence = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem_Bang_mutualexclusion = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem_Tuyen_independence = new DevExpress.XtraBars.BarButtonItem();
-            // Trang chứa các nút lệnh cho thao tác với cơ sở dữ liệu.
             this.ribbonPageDB = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup3 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup4 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup5 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            //Các trang chứa các nút lệnh cho thao tác với lược đồ
             this.ribbonPageScheme = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup7 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup8 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup9 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup10 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup11 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            //Các trang chứa các nút lệnh cho thao tác với quan hệ.
             this.ribbonPageRelation = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroupNewRelation = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupSaveRelation = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupOpenRelation = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupDeleteRelation = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupCloseCurrentRelation = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            //Các trang chứa các nút lệnh cho thao tác với truy vấn.
             this.ribbonPageQuery = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup20 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup21 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
@@ -109,18 +103,13 @@
             this.ribbonPageGroupDisjunction = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup24 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup25 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-
-            //Một control chia màn hình thành hai phần, thường được sử dụng để hiển thị dữ liệu theo cấu trúc cây (treeview) ở một bên và chi tiết dữ liệu ở bên kia.
             this.splitContainerControl1 = new DevExpress.XtraEditors.SplitContainerControl();
-            //Hiển thị danh sách các mục dưới dạng cây thư mục, có thể là các cơ sở dữ liệu, lược đồ hoặc quan hệ.
             this.TreeView = new System.Windows.Forms.TreeView();
-            //Dùng để hiển thị các điều khiển như các nút điều hướng dữ liệu (Home, Previous, Next, End).
             this.ToolStripTitleOV = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.xtraTabDatabase = new DevExpress.XtraTab.XtraTabControl();
             this.xtraTabPageScheme = new DevExpress.XtraTab.XtraTabPage();
-            //Sử dụng để hiển thị thông tin lược đồ như thuộc tính, kiểu dữ liệu, miền giá trị (domain) và mô tả.
             this.gridControlScheme = new DevExpress.XtraGrid.GridControl();
             this.gridView = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.gridColumnPrimary = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -144,7 +133,6 @@
             this.Btn_Data_DeleteRow = new System.Windows.Forms.ToolStripButton();
             this.Btn_Data_ClearData = new System.Windows.Forms.ToolStripButton();
             this.Btn_Data_UpdateData = new System.Windows.Forms.ToolStripButton();
-            //Hiển thị dữ liệu của các quan hệ xác suất, cho phép thao tác và chỉnh sửa trực tiếp giá trị và xác suất.
             this.GridViewData = new System.Windows.Forms.DataGridView();
             this.GridViewValue = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -154,17 +142,13 @@
             this.splitterControl1 = new DevExpress.XtraEditors.SplitterControl();
             this.xtraTabPageQuery = new DevExpress.XtraTab.XtraTabPage();
             this.splitContainerControl3 = new DevExpress.XtraEditors.SplitContainerControl();
-            //Một RichTextBox để nhập các câu truy vấn.
             this.txtQuery = new System.Windows.Forms.RichTextBox();
             this.xtraTabControlQueryResult = new DevExpress.XtraTab.XtraTabControl();
             this.xtraTabPageQueryResult = new DevExpress.XtraTab.XtraTabPage();
-            //Hiển thị kết quả truy vấn.
             this.GridViewResult = new System.Windows.Forms.DataGridView();
             this.MessageQuery = new DevExpress.XtraTab.XtraTabPage();
-            //Hiển thị thông báo lỗi hoặc kết quả trong quá trình thực thi truy vấn.
             this.txtMessage = new System.Windows.Forms.TextBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            //Định nghĩa các menu ngữ cảnh (chuột phải) cho các thao tác trên cơ sở dữ liệu, lược đồ, quan hệ và truy vấn (ví dụ: mở, xóa, đổi tên).
             this.ContextMenu_Database = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CTMenuDB_Rename = new System.Windows.Forms.ToolStripMenuItem();
             this.CTMenuDB_CloseDB = new System.Windows.Forms.ToolStripMenuItem();
@@ -235,24 +219,16 @@
             this.contextMenu_QueryNode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
-            //Đây là một thành phần của DevExpress dùng để quản lý phong cách (skin) giao diện của toàn bộ ứng dụng.
             // 
             // defaultLookAndFeel1
             // 
-            //thiết lập để áp dụng phong cách giao diện cụ thể. Trong trường hợp này, phong cách được chọn là "Office 2007 Blue", mang lại giao diện giống như Office 2007 với màu xanh dương chủ đạo.
             this.defaultLookAndFeel1.LookAndFeel.SkinName = "Office 2007 Blue";
             // 
             // ribbonControl_Tuyen_Independence
             // 
-            //Đây là thanh Ribbon của DevExpress, cung cấp giao diện người dùng hiện đại với các tab và nhóm lệnh.
-            //Đặt văn bản cho nút ứng dụng (nếu có). Ở đây, giá trị được đặt là null, nghĩa là không có văn bản hiển thị.
             this.ribbonControl_Tuyen_Independence.ApplicationButtonText = null;
-            //Đặt ID cho nút mở rộng/thu gọn Ribbon.
             this.ribbonControl_Tuyen_Independence.ExpandCollapseItem.Id = 0;
-            //Thiết lập font chữ cho Ribbon, ở đây sử dụng "Lucida Sans Unicode" với kích thước 8.25pt và kiểu chữ thường.
             this.ribbonControl_Tuyen_Independence.Font = new System.Drawing.Font("Lucida Sans Unicode", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            //Items.AddRange: Thêm một loạt các BarItem (nút lệnh) vào Ribbon. Các BarItem này bao gồm các nút để quản lý
-            //cơ sở dữ liệu (barButtonItemNewDB, barButtonItemOpenDB,...), lược đồ (barButtonItemNewScheme,...), quan hệ (barButtonItemNewRelation,...), và truy vấn (barButtonItemNewQuery,...).
             this.ribbonControl_Tuyen_Independence.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.ribbonControl_Tuyen_Independence.ExpandCollapseItem,
             this.ribbonControl_Tuyen_Independence.SearchEditItem,
@@ -293,24 +269,19 @@
             this.barButtonItem_Bang_independence,
             this.barButtonItem_Bang_mutualexclusion,
             this.barButtonItem_Tuyen_independence});
-            //Đặt vị trí của Ribbon trên form, ở đây là góc trên bên trái (0, 0).
             this.ribbonControl_Tuyen_Independence.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl_Tuyen_Independence.MaxItemId = 46;
             this.ribbonControl_Tuyen_Independence.Name = "ribbonControl_Tuyen_Independence";
-            //Pages.AddRange: Thêm các trang chính vào Ribbon
             this.ribbonControl_Tuyen_Independence.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
-            this.ribbonPageDB, //Trang quản lý cơ sở dữ liệu
-            this.ribbonPageScheme, // Trang quản lý lược đồ.
-            this.ribbonPageRelation, //Trang quản lý quan hệ.
-            this.ribbonPageQuery}); //Trang quản lý truy vấn.
-            // Đặt kích thước của Ribbon, ở đây là chiều rộng 1155 pixel và chiều cao 142 pixel.
+            this.ribbonPageDB,
+            this.ribbonPageScheme,
+            this.ribbonPageRelation,
+            this.ribbonPageQuery});
             this.ribbonControl_Tuyen_Independence.Size = new System.Drawing.Size(1155, 142);
-            //Sự kiện này được kích hoạt khi trang hiện tại của Ribbon đang thay đổi. Phương thức xử lý là ribbonControl1_SelectedPageChanging.
             this.ribbonControl_Tuyen_Independence.SelectedPageChanging += new DevExpress.XtraBars.Ribbon.RibbonPageChangingEventHandler(this.ribbonControl1_SelectedPageChanging);
-            //Sự kiện này được kích hoạt sau khi trang của Ribbon đã thay đổi. Phương thức xử lý là ribbonControl1_SelectedPageChanged.
             this.ribbonControl_Tuyen_Independence.SelectedPageChanged += new System.EventHandler(this.ribbonControl1_SelectedPageChanged);
             // 
-            // barButtonItemNewDB : Nút lệnh để tạo mới cơ sở dữ liệu.
+            // barButtonItemNewDB
             // 
             this.barButtonItemNewDB.Caption = "New Database";
             this.barButtonItemNewDB.Id = 1;
@@ -320,7 +291,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemNewDB.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemNewDB_ItemClick);
             // 
-            // barButtonItemOpenDB: Nút lệnh để mở cơ sở dữ liệu hiện có.
+            // barButtonItemOpenDB
             // 
             this.barButtonItemOpenDB.Caption = "Open Existing Database";
             this.barButtonItemOpenDB.Id = 2;
@@ -330,7 +301,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemOpenDB.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemOpenDB_ItemClick);
             // 
-            // barButtonItemSaveDB: Nút lệnh để lưu cơ sở dữ liệu.
+            // barButtonItemSaveDB
             // 
             this.barButtonItemSaveDB.Caption = "Save Database";
             this.barButtonItemSaveDB.Id = 3;
@@ -350,7 +321,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemCloseDb.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemCloseDb_ItemClick);
             // 
-            // barButtonItemExit: Nút lệnh để thoát ứng dụng.
+            // barButtonItemExit
             // 
             this.barButtonItemExit.Caption = "Exit";
             this.barButtonItemExit.Id = 5;
@@ -366,7 +337,7 @@
             this.barButtonItem6.Id = 6;
             this.barButtonItem6.Name = "barButtonItem6";
             // 
-            // barButtonItemNewScheme: Thêm mới lược đồ
+            // barButtonItemNewScheme
             // 
             this.barButtonItemNewScheme.Caption = "New Schema";
             this.barButtonItemNewScheme.Id = 7;
@@ -376,7 +347,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemNewScheme.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemNewScheme_ItemClick);
             // 
-            // barButtonItemEditScheme: Chỉnh sửa lược đồ
+            // barButtonItemEditScheme
             // 
             this.barButtonItemEditScheme.Caption = "Edit Schema";
             this.barButtonItemEditScheme.Id = 8;
@@ -386,7 +357,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemEditScheme.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemSaveScheme_ItemClick);
             // 
-            // barButtonItemOpenScheme: Mở 1 lược đồ
+            // barButtonItemOpenScheme
             // 
             this.barButtonItemOpenScheme.Caption = "Open Schema";
             this.barButtonItemOpenScheme.Id = 9;
@@ -396,7 +367,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemOpenScheme.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemOpenScheme_ItemClick);
             // 
-            // barButtonItemDeleteScheme: Xóa 1 lược đồ
+            // barButtonItemDeleteScheme
             // 
             this.barButtonItemDeleteScheme.Caption = "Delete Schema\r\n";
             this.barButtonItemDeleteScheme.Id = 10;
@@ -406,7 +377,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemDeleteScheme.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemDeleteScheme_ItemClick);
             // 
-            // barButtonItemCloseCurrentScheme: Đóng lược đồ
+            // barButtonItemCloseCurrentScheme
             // 
             this.barButtonItemCloseCurrentScheme.Caption = "Close Current Schema";
             this.barButtonItemCloseCurrentScheme.Id = 11;
@@ -422,7 +393,7 @@
             this.barButtonItem7.Id = 12;
             this.barButtonItem7.Name = "barButtonItem7";
             // 
-            // barButtonItemNewRelation: Thêm mới quan hệ
+            // barButtonItemNewRelation
             // 
             this.barButtonItemNewRelation.Caption = "New Relation";
             this.barButtonItemNewRelation.Id = 13;
@@ -432,7 +403,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemNewRelation.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemNewRelation_ItemClick);
             // 
-            // barButtonItemEditRelation: Chỉnh sửa quan hệ
+            // barButtonItemEditRelation
             // 
             this.barButtonItemEditRelation.Caption = "Edit Relation";
             this.barButtonItemEditRelation.Id = 14;
@@ -442,7 +413,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemEditRelation.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemEditRelation_ItemClick);
             // 
-            // barButtonItemOpenRelation: Mở 1 quan hệ
+            // barButtonItemOpenRelation
             // 
             this.barButtonItemOpenRelation.Caption = "Open Relation";
             this.barButtonItemOpenRelation.Id = 15;
@@ -452,7 +423,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemOpenRelation.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemOpenRelation_ItemClick);
             // 
-            // barButtonItemDeleteRelation: Xóa quan hệ
+            // barButtonItemDeleteRelation
             // 
             this.barButtonItemDeleteRelation.Caption = "Delete Relation\r\n";
             this.barButtonItemDeleteRelation.Id = 16;
@@ -462,7 +433,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemDeleteRelation.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemDeleteRelation_ItemClick);
             // 
-            // barButtonItemCloseCurrentRelation: Đóng 1 quan hệ
+            // barButtonItemCloseCurrentRelation
             // 
             this.barButtonItemCloseCurrentRelation.Caption = "Close Current Relation";
             this.barButtonItemCloseCurrentRelation.Id = 17;
@@ -478,7 +449,7 @@
             this.barButtonItem8.Id = 18;
             this.barButtonItem8.Name = "barButtonItem8";
             // 
-            // barButtonItemNewQuery: Tạo mới truy vấn
+            // barButtonItemNewQuery
             // 
             this.barButtonItemNewQuery.Caption = "New Query";
             this.barButtonItemNewQuery.Id = 19;
@@ -488,7 +459,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemNewQuery.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemNewQuery_ItemClick);
             // 
-            // barButtonItemSaveQuery: Lưu truy vấn
+            // barButtonItemSaveQuery
             // 
             this.barButtonItemSaveQuery.Caption = "Save Query";
             this.barButtonItemSaveQuery.Enabled = false;
@@ -499,7 +470,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemSaveQuery.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemSaveQuery_ItemClick);
             // 
-            // barButtonItemOpenQuery: Mở truy vấn
+            // barButtonItemOpenQuery
             // 
             this.barButtonItemOpenQuery.Caption = "Open Query";
             this.barButtonItemOpenQuery.Id = 21;
@@ -509,7 +480,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemOpenQuery.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemOpenQuery_ItemClick);
             // 
-            // barButtonItemDeleteQuery: Xóa truy vấn
+            // barButtonItemDeleteQuery
             // 
             this.barButtonItemDeleteQuery.Caption = "Delete Query\r\n";
             this.barButtonItemDeleteQuery.Id = 22;
@@ -519,7 +490,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemDeleteQuery.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemDeleteQuery_ItemClick);
             // 
-            // barButtonItemExcuteQuery: Thực thi truy vấn
+            // barButtonItemExcuteQuery
             // 
             this.barButtonItemExcuteQuery.Caption = "Excute Query";
             this.barButtonItemExcuteQuery.Enabled = false;
@@ -531,7 +502,7 @@
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItemExcuteQuery.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItemExcuteQuery_ItemClick);
             // 
-            // barButtonItemCloseCurrentQuery: Đóng truy vấn
+            // barButtonItemCloseCurrentQuery
             // 
             this.barButtonItemCloseCurrentQuery.Caption = "Close Current Query";
             this.barButtonItemCloseCurrentQuery.Enabled = false;
@@ -544,14 +515,12 @@
             // 
             // barButtonGroup1
             // 
-            //Nhóm và nút điều khiển liên quan đến "⊕_ig" (ignorance)
             this.barButtonGroup1.Caption = "barButtonGroup1";
             this.barButtonGroup1.Id = 25;
             this.barButtonGroup1.Name = "barButtonGroup1";
             // 
             // barButtonItem_Hoi_Ignor
             // 
-            //Nút này có nhãn "⊕_ig (ignorance)" và font chữ đặc biệt. Khi người dùng bấm vào, sự kiện barButtonItem_Hoi_Ignor_ItemClick sẽ được xử lý. Nút này có định dạng kiểu chữ lớn và đậm khi ở trạng thái bình thường
             this.barButtonItem_Hoi_Ignor.Caption = "⊕_ig (ignorance)";
             this.barButtonItem_Hoi_Ignor.Id = 26;
             this.barButtonItem_Hoi_Ignor.ItemAppearance.Disabled.Font = new System.Drawing.Font("Lucida Sans Unicode", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -585,7 +554,6 @@
             // 
             // barButtonItem_Tuyen_ignorance
             // 
-            //barButtonItem_Tuyen_ignorance, barButtonItem_Tuyen_mutualexclusion, barButtonItem_Tuyen_independence: Các nút này có chức năng tương tự như nhóm "⊕" và "⊗" nhưng dành cho các phép toán khác nhau. Mỗi nút có nhãn riêng và khi bấm vào sẽ kích hoạt sự kiện cụ thể.
             this.barButtonItem_Tuyen_ignorance.Caption = "⊕_ig (ignorance)";
             this.barButtonItem_Tuyen_ignorance.Id = 29;
             this.barButtonItem_Tuyen_ignorance.ItemAppearance.Disabled.Font = new System.Drawing.Font("Lucida Sans Unicode", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -649,13 +617,12 @@
             // 
             // ribbonPageDB
             // 
-            //ribbonPageDB: Một trang trong ribbon menu có tên là "Database". Trang này chứa các nhóm nút điều khiển
             this.ribbonPageDB.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonPageGroup1,//  Chứa nút barButtonItemNewDB (tạo cơ sở dữ liệu mới
-            this.ribbonPageGroup2, //Chứa nút barButtonItemOpenDB (mở cơ sở dữ liệu).
-            this.ribbonPageGroup3, // Chứa nút barButtonItemSaveDB (lưu cơ sở dữ liệu).
-            this.ribbonPageGroup4, // Chứa nút barButtonItemCloseDb (đóng cơ sở dữ liệu).
-            this.ribbonPageGroup5}); //Chứa nút barButtonItemExit (thoát ứng dụng).
+            this.ribbonPageGroup1,
+            this.ribbonPageGroup2,
+            this.ribbonPageGroup3,
+            this.ribbonPageGroup4,
+            this.ribbonPageGroup5});
             this.ribbonPageDB.Name = "ribbonPageDB";
             this.ribbonPageDB.Text = "Database";
             // 
@@ -687,14 +654,12 @@
             // 
             // ribbonPageScheme
             // 
-            //ribbonPageScheme: Một trang trong ribbon menu có tên "Schema".
-            //Trang này chứa các nhóm nút điều khiển liên quan đến việc quản lý lược đồ:
             this.ribbonPageScheme.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonPageGroup7, //Chứa nút barButtonItemNewScheme (tạo lược đồ mới).
-            this.ribbonPageGroup8, //Chứa nút barButtonItemEditScheme (chỉnh sửa lược đồ).
-            this.ribbonPageGroup9, //Chứa nút barButtonItemOpenScheme (mở lược đồ).
-            this.ribbonPageGroup10, //Chứa nút barButtonItemDeleteScheme (xóa lược đồ).
-            this.ribbonPageGroup11}); //Chứa nút barButtonItemCloseCurrentScheme (đóng lược đồ hiện tại).
+            this.ribbonPageGroup7,
+            this.ribbonPageGroup8,
+            this.ribbonPageGroup9,
+            this.ribbonPageGroup10,
+            this.ribbonPageGroup11});
             this.ribbonPageScheme.Name = "ribbonPageScheme";
             this.ribbonPageScheme.Text = "Schema";
             // 
@@ -725,7 +690,6 @@
             // 
             // ribbonPageRelation
             // 
-            //một trang trong ribbon, chứa các nhóm lệnh để quản lý quan hệ (Relation)
             this.ribbonPageRelation.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
             this.ribbonPageGroupNewRelation,
             this.ribbonPageGroupSaveRelation,
@@ -763,7 +727,6 @@
             // 
             // ribbonPageQuery
             // 
-            // chứa các nhóm lệnh liên quan đến truy vấn (Query).
             this.ribbonPageQuery.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
             this.ribbonPageGroup20,
             this.ribbonPageGroup21,
@@ -798,8 +761,6 @@
             // 
             // ribbonPageGroupConjuntion
             // 
-            //Đây là các nhóm chứa các lệnh để xử lý các phép toán hội và tuyển cho các điều kiện truy vấn.
-            //Tuy nhiên, cả hai nhóm này đều đang bị ẩn (Visible = false).
             this.ribbonPageGroupConjuntion.ItemLinks.Add(this.barButtonItem_Hoi_Ignor);
             this.ribbonPageGroupConjuntion.ItemLinks.Add(this.barButtonItem_Hoi_independence);
             this.ribbonPageGroupConjuntion.ItemLinks.Add(this.barButtonItem_Hoi_mutualexclusion);
@@ -829,7 +790,6 @@
             // 
             // splitContainerControl1
             // 
-            //Đây là một thành phần giao diện chia cửa sổ làm hai phần (Panel1 và Panel2).
             this.splitContainerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerControl1.Location = new System.Drawing.Point(0, 142);
             this.splitContainerControl1.Name = "splitContainerControl1";
@@ -845,8 +805,6 @@
             // 
             // TreeView
             // 
-            //Panel1 chứa TreeView để hiển thị cấu trúc đối tượng (Object Explorer) và thanh công cụ tiêu đề ToolStripTitleOV.
-            //TreeView có thể hiển thị các mục như bảng, quan hệ, và lược đồ trong cơ sở dữ liệu.
             this.TreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TreeView.Font = new System.Drawing.Font("Times New Roman", 12F);
             this.TreeView.ForeColor = System.Drawing.Color.Blue;
@@ -883,7 +841,6 @@
             // 
             // xtraTabDatabase
             // 
-            //Panel2 chứa xtraTabDatabase là một tab chứa các trang khác nhau cho lược đồ (Scheme), quan hệ (Relation), và truy vấn (Query).
             this.xtraTabDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xtraTabDatabase.Location = new System.Drawing.Point(0, 0);
             this.xtraTabDatabase.Name = "xtraTabDatabase";
@@ -897,7 +854,6 @@
             // 
             // xtraTabPageScheme
             // 
-            //xtraTabPageScheme: Hiển thị dữ liệu lược đồ thông qua gridControlScheme, một lưới dữ liệu cho phép xem các thuộc tính của lược đồ như khóa chính, kiểu dữ liệu, miền giá trị, và mô tả.
             this.xtraTabPageScheme.Controls.Add(this.gridControlScheme);
             this.xtraTabPageScheme.Name = "xtraTabPageScheme";
             this.xtraTabPageScheme.Size = new System.Drawing.Size(898, 395);
@@ -905,7 +861,6 @@
             // 
             // gridControlScheme
             // 
-            //xtraTabPageRelation: Trang này có một trình điều khiển chia nhỏ khác (splitContainerControl2), trong đó phần trên có thể là các điều khiển nhập liệu và phần dưới có thể hiển thị dữ liệu trong GridViewValue hoặc nhập liệu trực tiếp qua txtValue.
             this.gridControlScheme.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridControlScheme.Location = new System.Drawing.Point(0, 0);
             this.gridControlScheme.MainView = this.gridView;
@@ -921,8 +876,6 @@
             // 
             // gridView
             // 
-            //Các cột: Bảng này chứa 5 cột (Primary Key, Attribute Name, Data Type, Domain, Description).
-            //Mỗi cột được xác định qua GridColumn và có thuộc tính như Visible và VisibleIndex để kiểm soát việc hiển thị.
             this.gridView.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.gridColumnPrimary,
             this.gridColumnAttribute,
@@ -931,27 +884,18 @@
             this.gridColumnDescription});
             this.gridView.GridControl = this.gridControlScheme;
             this.gridView.Name = "gridView";
-            //AllowAddRows, AllowDeleteRows: Không cho phép thêm hoặc xóa dòng.
             this.gridView.OptionsBehavior.AllowAddRows = DevExpress.Utils.DefaultBoolean.False;
             this.gridView.OptionsBehavior.AllowDeleteRows = DevExpress.Utils.DefaultBoolean.False;
-            //Editable: Không cho phép chỉnh sửa trực tiếp dữ liệu.
             this.gridView.OptionsBehavior.Editable = false;
-            //ReadOnly: Chế độ chỉ đọc.
             this.gridView.OptionsBehavior.ReadOnly = true;
-            //AutoFocusNewRow: Tự động chuyển tiêu điểm sang dòng mới khi người dùng nhập dữ liệu
             this.gridView.OptionsNavigation.AutoFocusNewRow = true;
-            //EnterMoveNextColumn: Di chuyển tới cột tiếp theo khi nhấn Enter.
             this.gridView.OptionsNavigation.EnterMoveNextColumn = true;
             this.gridView.OptionsView.GroupFooterShowMode = DevExpress.XtraGrid.Views.Grid.GroupFooterShowMode.Hidden;
-            //ShowAutoFilterRow: Hiển thị hàng lọc tự động trên mỗi cột.
             this.gridView.OptionsView.ShowAutoFilterRow = true;
-            //ShowGroupPanel: Ẩn nhóm điều khiển (panel group).
             this.gridView.OptionsView.ShowGroupPanel = false;
             // 
             // gridColumnPrimary
             // 
-            //Cột này hiển thị trạng thái khóa chính (Primary Key) với kiểu dữ liệu checkbox (repositoryItemCheckEdit1).
-            //Kiểu NullStyle của checkbox là Unchecked, tức là trạng thái null sẽ hiển thị như chưa được chọn.
             this.gridColumnPrimary.Caption = "Primary key";
             this.gridColumnPrimary.ColumnEdit = this.repositoryItemCheckEdit1;
             this.gridColumnPrimary.Name = "gridColumnPrimary";
@@ -966,8 +910,6 @@
             // 
             // gridColumnAttribute
             // 
-            //Các cột khác (gridColumnAttribute, gridColumnDataType, gridColumnDomain, gridColumnDescription):
-            //Mỗi cột này hiển thị một thuộc tính tương ứng của dữ liệu: tên thuộc tính, kiểu dữ liệu, miền (domain), và mô tả.
             this.gridColumnAttribute.Caption = "Attribute name";
             this.gridColumnAttribute.Name = "gridColumnAttribute";
             this.gridColumnAttribute.Visible = true;
@@ -996,7 +938,6 @@
             // 
             // xtraTabPageRelation
             // 
-            //Một tab trong giao diện chứa splitContainerControl2 và splitterControl1 để quản lý việc chia bố cục thành nhiều phần.
             this.xtraTabPageRelation.Controls.Add(this.splitContainerControl2);
             this.xtraTabPageRelation.Controls.Add(this.splitterControl1);
             this.xtraTabPageRelation.Name = "xtraTabPageRelation";
@@ -1005,7 +946,6 @@
             // 
             // splitContainerControl2
             // 
-            //Bố cục này chia thành hai phần (Panel1 và Panel2). Panel1 chứa panelControl1 để hiển thị dữ liệu, trong khi Panel2 chứa các thành phần như GridViewValue và txtValue.
             this.splitContainerControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerControl2.Horizontal = false;
             this.splitContainerControl2.Location = new System.Drawing.Point(4, 0);
@@ -1021,7 +961,6 @@
             // 
             // panelControl1
             // 
-            //Chứa BindingNavigatorData và GridViewData, nơi người dùng có thể điều hướng và thao tác với dữ liệu.
             this.panelControl1.Controls.Add(this.BindingNavigatorData);
             this.panelControl1.Controls.Add(this.GridViewData);
             this.panelControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1032,11 +971,9 @@
             // 
             // BindingNavigatorData
             // 
-            //Đây là thanh điều hướng cho dữ liệu, cho phép người dùng di chuyển giữa các hàng trong lưới (Grid).
             this.BindingNavigatorData.BackColor = System.Drawing.Color.Gainsboro;
             this.BindingNavigatorData.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.BindingNavigatorData.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                //Các nút như btn_Data_Home, btn_Data_Pre, btn_Data_Next, và btn_Data_End cho phép người dùng di chuyển về đầu, lùi, tiến, hoặc tới cuối danh sách hàng.
             this.btn_Data_Home,
             this.btn_Data_Pre,
             this.toolStripSeparator9,
@@ -1056,7 +993,6 @@
             // 
             // btn_Data_Home
             // 
-            //Các chức năng sự kiện (Event) như btn_Data_Home_Click, btn_Data_Pre_Click, btn_Data_Next_Click, và btn_Data_End_Click sẽ được gọi khi người dùng nhấn vào các nút tương ứng để di chuyển qua các hàng dữ liệu.
             this.btn_Data_Home.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btn_Data_Home.Image = ((System.Drawing.Image)(resources.GetObject("btn_Data_Home.Image")));
             this.btn_Data_Home.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
@@ -1086,7 +1022,6 @@
             // 
             // lblDataRowNumberIndicator
             // 
-            //lblDataRowNumberIndicator hiển thị số lượng hàng hiện tại dưới dạng "0/0", giúp người dùng biết vị trí hiện tại của họ trong danh sách.
             this.lblDataRowNumberIndicator.Name = "lblDataRowNumberIndicator";
             this.lblDataRowNumberIndicator.Size = new System.Drawing.Size(30, 23);
             this.lblDataRowNumberIndicator.Text = "0 / 0";
@@ -1359,7 +1294,7 @@
             // 
             // toolStripLabel1
             // 
-            this.toolStripLabel1.AutoSize = false; //ngăn nhãn tự động thay đổi kích thước.
+            this.toolStripLabel1.AutoSize = false;
             this.toolStripLabel1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold);
             this.toolStripLabel1.ForeColor = System.Drawing.Color.White;
             this.toolStripLabel1.Margin = new System.Windows.Forms.Padding(50, 1, 0, 2);
@@ -1369,10 +1304,9 @@
             // 
             // ContextMenu_Database
             // 
-            //menu ngữ cảnh được hiển thị khi người dùng tương tác với cơ sở dữ liệu.
             this.ContextMenu_Database.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuDB_Rename, //đổi tên cơ sở dữ liệu
-            this.CTMenuDB_CloseDB}); //đóng cơ sở dữ liệu.
+            this.CTMenuDB_Rename,
+            this.CTMenuDB_CloseDB});
             this.ContextMenu_Database.Name = "contextMenuStrip";
             this.ContextMenu_Database.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.ContextMenu_Database.Size = new System.Drawing.Size(169, 48);
@@ -1380,7 +1314,6 @@
             // 
             // CTMenuDB_Rename
             // 
-            // Khi người dùng chọn CTMenuDB_Rename, phương thức CTMenuDB_Rename_Click sẽ được gọi
             this.CTMenuDB_Rename.Name = "CTMenuDB_Rename";
             this.CTMenuDB_Rename.Size = new System.Drawing.Size(168, 22);
             this.CTMenuDB_Rename.Text = "Re&name Database";
@@ -1395,14 +1328,13 @@
             // 
             // ContextMenu_Schema
             // 
-            //Menu ngữ cảnh dành cho lược đồ (schema).
             this.ContextMenu_Schema.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContextMenu_Schema.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuSchema_NewSchema, //tạo lược đồ mới.
-            this.CTMenuSchema_DelSchemas, //chỉnh sửa lược đồ.
-            this.openSchemeToolStripMenuItem, //mở lược đồ.
-            this.deleteSchemeToolStripMenuItem, //xóa lược đồ.
-            this.closeCurrentSchemeToolStripMenuItem}); //đóng lược đồ hiện tại.
+            this.CTMenuSchema_NewSchema,
+            this.CTMenuSchema_DelSchemas,
+            this.openSchemeToolStripMenuItem,
+            this.deleteSchemeToolStripMenuItem,
+            this.closeCurrentSchemeToolStripMenuItem});
             this.ContextMenu_Schema.Name = "ContextMenu_Schema";
             this.ContextMenu_Schema.Size = new System.Drawing.Size(215, 114);
             // 
@@ -1443,12 +1375,11 @@
             // 
             // ContextMenu_SchemaNode
             // 
-            //menu ngữ cảnh cho các node lược đồ, chứa các tùy chọn 
             this.ContextMenu_SchemaNode.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContextMenu_SchemaNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuSchNode_EditSchema, //chỉnh sửa lược đồ.
-            this.CTMenuSchNode_OpenSchema, //mở lược đồ.
-            this.CTMenuSchNode_DeleteSchema}); //xóa lược đồ
+            this.CTMenuSchNode_EditSchema,
+            this.CTMenuSchNode_OpenSchema,
+            this.CTMenuSchNode_DeleteSchema});
             this.ContextMenu_SchemaNode.Name = "ContextMenu_Table";
             this.ContextMenu_SchemaNode.Size = new System.Drawing.Size(169, 70);
             // 
@@ -1476,11 +1407,10 @@
             // 
             // ContextMenu_Relation
             // 
-            // Menu ngữ cảnh cho quan hệ (relation)
             this.ContextMenu_Relation.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContextMenu_Relation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuRelation_NewRelation, //tạo quan hệ mới.
-            this.CTMenuRelation_DeleteRelations}); //xóa tất cả các quan hệ.
+            this.CTMenuRelation_NewRelation,
+            this.CTMenuRelation_DeleteRelations});
             this.ContextMenu_Relation.Name = "ContextMenu_Table";
             this.ContextMenu_Relation.Size = new System.Drawing.Size(200, 48);
             // 
@@ -1502,12 +1432,11 @@
             // 
             // ContextMenu_RelationNode
             // 
-            // Menu ngữ cảnh dành cho node quan hệ
             this.ContextMenu_RelationNode.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContextMenu_RelationNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuRelNode_OpenRelation, //mở quan hệ.
-            this.CTMenuRelNode_DeleteRelation, // xóa quan hệ.
-            this.CTMenuRelNode_RenameRelation}); //đổi tên quan hệ.
+            this.CTMenuRelNode_OpenRelation,
+            this.CTMenuRelNode_DeleteRelation,
+            this.CTMenuRelNode_RenameRelation});
             this.ContextMenu_RelationNode.Name = "ContextMenu_Table";
             this.ContextMenu_RelationNode.Size = new System.Drawing.Size(181, 70);
             // 
@@ -1535,11 +1464,10 @@
             // 
             // ContextMenu_Query
             // 
-            // Menu ngữ cảnh dành cho truy vấn (query)
             this.ContextMenu_Query.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContextMenu_Query.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuQuery_NewQuery, //tạo truy vấn mới.
-            this.CTMenuQuery_DeleteQueries}); //xóa tất cả các truy vấn.
+            this.CTMenuQuery_NewQuery,
+            this.CTMenuQuery_DeleteQueries});
             this.ContextMenu_Query.Name = "ContextMenu_Query";
             this.ContextMenu_Query.Size = new System.Drawing.Size(190, 48);
             // 
@@ -1559,12 +1487,11 @@
             // 
             // contextMenu_QueryNode
             // 
-            //Menu ngữ cảnh cho node truy vấn
             this.contextMenu_QueryNode.Font = new System.Drawing.Font("Lucida Sans Unicode", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.contextMenu_QueryNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CTMenuQueryNode_OpenQuery, //mở truy vấn.
-            this.CTMenuQuery_DeleteQuery, //xóa truy vấn.
-            this.CTMenuQuery_RenameQuery}); //đổi tên truy vấn.
+            this.CTMenuQueryNode_OpenQuery,
+            this.CTMenuQuery_DeleteQuery,
+            this.CTMenuQuery_RenameQuery});
             this.contextMenu_QueryNode.Name = "ContextMenu_Query";
             this.contextMenu_QueryNode.Size = new System.Drawing.Size(167, 70);
             // 
@@ -1591,8 +1518,6 @@
             // 
             // ImageList_TreeView
             // 
-            // quản lý danh sách hình ảnh sẽ được sử dụng trong TreeView
-            // ImageStream được dùng để lấy các hình ảnh
             this.ImageList_TreeView.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageList_TreeView.ImageStream")));
             this.ImageList_TreeView.TransparentColor = System.Drawing.Color.Transparent;
             this.ImageList_TreeView.Images.SetKeyName(0, "DB.png");
@@ -1604,8 +1529,7 @@
             this.ImageList_TreeView.Images.SetKeyName(6, "attribute.png");
             // 
             // errorProvider
-            // hiển thị các lỗi dưới dạng trực quan,
-            // thường là biểu tượng dấu chấm than màu đỏ bên cạnh các điều khiển trên form
+            // 
             this.errorProvider.ContainerControl = this;
             // 
             // ribbonPageGroup6
@@ -1641,8 +1565,7 @@
             this.barButtonItem2.Name = "barButtonItem2";
             // 
             // ribbonPageGroup12
-            // Nhóm lệnh này trong ribbon xử lý các phép toán rời rạc (phép OR logic),
-            // nhưng hiện tại nó đang bị ẩn (Visible = false).
+            // 
             this.ribbonPageGroup12.ItemLinks.Add(this.barButtonItem_Tuyen_ignorance);
             this.ribbonPageGroup12.ItemLinks.Add(this.barButtonItem_Tuyen_mutualexclusion);
             this.ribbonPageGroup12.Name = "ribbonPageGroup12";

@@ -1,9 +1,8 @@
-﻿using PRDB_Sqlite.DAL;
+﻿using IPRDB_Sqlite.DAL;
 using System.Collections.Generic;
 using System.Data;
 
-
-namespace PRDB_Sqlite.BLL
+namespace IPRDB_Sqlite.BLL
 {
     public class ProbDatabase
     {
