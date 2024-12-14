@@ -1,9 +1,13 @@
 ﻿using DevExpress.XtraBars.Ribbon;
+using DevExpress.XtraEditors;
+using DevExpress.XtraGrid.Columns;
 using PRDB_Sqlite.BLL;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -18,6 +22,7 @@ namespace PRDB_Sqlite.GUI
         ProbRelation currentRelationOpen = new ProbRelation();
         ProbScheme currentScheme;
         ProbQuery currentQuery;
+        DataTable dtrelation = new DataTable();
         #endregion
 
 
@@ -131,6 +136,7 @@ namespace PRDB_Sqlite.GUI
 
         #region TreeView
 
+        // thiết lập các chỉ số hình ảnh cho từng loại nút trong TreeView
         private void LoadImageCollection()
         {
             try
@@ -150,14 +156,18 @@ namespace PRDB_Sqlite.GUI
             }
 
         }
+        //thiết lập và tải dữ liệu cho TreeView
         private void Load_TreeView()
         {
             try
             {
+                //xóa các nút trong TreeView
                 TreeView.Nodes.Clear();
+                //xử lý sự kiện nhấn chuột vào các nút
                 TreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(TreeView_NodeMouseClick);
                 LoadImageCollection();
 
+                //nút cơ sở dữ liệu (Database).
                 NodeDB = new TreeNode();
                 NodeDB.Text = probDatabase.DBName.ToUpper();
                 NodeDB.ToolTipText = "Database " + probDatabase.DBName.ToUpper();
@@ -166,6 +176,7 @@ namespace PRDB_Sqlite.GUI
                 NodeDB.SelectedImageIndex = DB_ImgIndex.SelectedState;
                 TreeView.Nodes.Add(NodeDB);
 
+                //thư mục Schemas.
                 NodeScheme = new TreeNode();
                 NodeScheme.Text = "Schemas";
                 NodeScheme.ToolTipText = "Schemas";
@@ -174,6 +185,7 @@ namespace PRDB_Sqlite.GUI
                 NodeScheme.SelectedImageIndex = Folder_ImgIndex.UnselectedState;
                 NodeDB.Nodes.Add(NodeScheme);
 
+                //thư mục Relations.
                 NodeRelation = new TreeNode();
                 NodeRelation.Text = "Relations";
                 NodeRelation.ToolTipText = "Relations";
@@ -182,6 +194,7 @@ namespace PRDB_Sqlite.GUI
                 NodeRelation.SelectedImageIndex = Folder_ImgIndex.UnselectedState;
                 NodeDB.Nodes.Add(NodeRelation);
 
+                //thư mục Queries.
                 NodeQuery = new TreeNode();
                 NodeQuery.Text = "Queries";
                 NodeQuery.ToolTipText = "Queries";
@@ -190,6 +203,7 @@ namespace PRDB_Sqlite.GUI
                 NodeQuery.SelectedImageIndex = Folder_ImgIndex.UnselectedState;
                 NodeDB.Nodes.Add(NodeQuery);
 
+                //tải các nút con vào NodeScheme, NodeRelation, và NodeQuery.
                 LoadTreeViewNode();
             }
             catch
@@ -197,13 +211,16 @@ namespace PRDB_Sqlite.GUI
             }
         }
 
+        //xử lý sự kiện khi nhấn chuột vào các nút trong TreeView
         void TreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            //Nếu nhấn chuột phải, nút được nhấn sẽ trở thành nút được chọn trong TreeView.
             if (e.Button == MouseButtons.Right)
             {
                 TreeView.SelectedNode = e.Node;
             }
 
+            //Nếu nhấn chuột trái, hàm sẽ kiểm tra nút thuộc loại nào (Schemas, Relations, hoặc Queries) và mở tương ứng
             if (e.Button == MouseButtons.Left)
             {
                 try
@@ -211,17 +228,17 @@ namespace PRDB_Sqlite.GUI
                     string nodeName = e.Node.Name;
                     if (e.Node.Parent.Text == "Schemas")
                     {
-                        OpenSchemeByNameScheme(nodeName);
+                        OpenSchemeByNameScheme(nodeName); //Mở schema dựa trên tên của schema.
                     }
                     else
                         if (e.Node.Parent.Text == "Relations")
                     {
-                        OpenRelationByName(nodeName);
+                        OpenRelationByName(nodeName); //Mở relation dựa trên tên của relation.
                     }
                     else
                             if (e.Node.Parent.Text == "Queries")
                     {
-                        OpenQueryByName(nodeName);
+                        OpenQueryByName(nodeName); //Mở query dựa trên tên của query.
                     }
                 }
                 catch
@@ -599,15 +616,18 @@ namespace PRDB_Sqlite.GUI
 
         #endregion
 
+        //hiển thị thông tin chi tiết của một schema (lược đồ) được chọn
         #region New, Open, Save, Delete, Close, CTMenu Scheme
         private void OpenSchemeByNameScheme(string schemeName)
         {
             try
             {
+                //Chuyển tới tab Schema để hiển thị chi tiết.
                 xtraTabDatabase.SelectedTabPage = xtraTabDatabase.TabPages[0];
                 schemeName = schemeName.ToLower();
                 xtraTabPageScheme.Text = "Schema " + schemeName;
 
+                //Tìm schema trong probDatabase dựa trên schemeName.
                 currentScheme = this.probDatabase.Schemes.SingleOrDefault(c => c.SchemeName.ToLower() == schemeName);
 
                 //add attribute into GridViewDesign
@@ -619,6 +639,7 @@ namespace PRDB_Sqlite.GUI
                 gridColumnDataType.FieldName = "TypeName";
                 gridColumnAttribute.FieldName = "AttributeName";
 
+                //bật nút điều khiển để người dùng có thể đóng scheme hiện tại
                 barButtonItemCloseCurrentScheme.Enabled = true;
                 ribbonControl_Tuyen_Independence.SelectedPage = ribbonPageScheme;
             }
@@ -1064,46 +1085,136 @@ namespace PRDB_Sqlite.GUI
         {
             try
             {
+                // Hiển thị và chọn tab Relation
                 xtraTabPageRelation.PageEnabled = true;
-                xtraTabPageRelation.Text = "Relation " + RelationName;
+                xtraTabPageRelation.Text = "Relation " + RelationName; // Gắn tên quan hệ cho tab
                 xtraTabDatabase.SelectedTabPage = xtraTabDatabase.TabPages[1];
-                GridViewData.Rows.Clear();
-                GridViewData.Columns.Clear();
 
+                // Lấy quan hệ hiện tại từ cơ sở dữ liệu
                 currentRelationOpen = this.probDatabase.Relations.SingleOrDefault(c => c.RelationName == RelationName);
 
-                int i = 0;
-                foreach (ProbAttribute attr in currentRelationOpen.Scheme.Attributes)
-                {
-                    GridViewData.Columns.Add("Column " + i, attr.AttributeName);
-                    i++;
-                }
+                // Cập nhật GridView với quan hệ vừa lấy
+                ResetGridViewRelation(currentRelationOpen);
 
-                if (currentRelationOpen.tuples.Count > 0)
-                {
-                    int nRow = currentRelationOpen.tuples.Count;
-                    int nCol = currentRelationOpen.Scheme.Attributes.Count;
-
-                    ProbTuple tuple;
-
-                    for (i = 0; i < nRow; i++) // Assign data for GridViewData
-                    {
-                        tuple = currentRelationOpen.tuples[i];
-                        GridViewData.Rows.Add();
-                        for (int j = 0; j < nCol; j++)
-                            GridViewData.Rows[i].Cells[j].Value = tuple.Triples[j].GetStrValue();
-                    }
-                    UpdateDataRowNumber();
-
-                }
+                // Cập nhật các button điều khiển
                 barButtonItemCloseCurrentRelation.Enabled = true;
                 ribbonControl_Tuyen_Independence.SelectedPage = ribbonPageRelation;
-
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
+                XtraMessageBox.Show(Ex.Message);
             }
         }
+
+        private void ResetGridViewRelation(ProbRelation currentRelationOpen)
+        {
+            try
+            {
+                // Reset GridView và DataTable
+                GridViewData.DataSource = null;
+                GridViewData.Rows.Clear();
+                GridViewData.Columns.Clear();
+                dtrelation = new DataTable();
+
+                // Thêm cột vào DataTable (theo lược đồ từ Relation Schema)
+                foreach (ProbAttribute att in currentRelationOpen.Scheme.Attributes)
+                {
+                    if (!dtrelation.Columns.Contains(att.AttributeName))
+                    {
+                        dtrelation.Columns.Add(att.AttributeName, typeof(string)); // Thêm cột với kiểu string
+
+                    }
+                }
+
+                // Thêm dữ liệu từ các Tuple vào DataTable
+                foreach (ProbTuple tuple in currentRelationOpen.Tuples)
+                {
+                    DataRow row = dtrelation.NewRow(); // Tạo một hàng mới trong DataTable
+
+                    for (int j = 0; j < currentRelationOpen.Scheme.Attributes.Count; j++)
+                    {
+                        if (j < tuple.Triples.Count)
+                        {
+                            ProbTriple triple = tuple.Triples[j];
+                            string tripleValues = string.Empty;
+
+                            // Kiểm tra và xử lý giá trị triple
+                            if (triple.Values != null && triple.Values.Count > 0)
+                            {
+                                // Nếu MinProbs hoặc MaxProbs chưa được gán, ta sẽ xử lý lại để đảm bảo chúng có giá trị mặc định hoặc đồng bộ với các giá trị
+                                if (triple.MinProbs == null || triple.MinProbs.Count == 0)
+                                {
+                                    triple.MinProbs = new List<double> { 0.0 }; // Gán giá trị mặc định
+                                }
+                                if (triple.MaxProbs == null || triple.MaxProbs.Count == 0)
+                                {
+                                    triple.MaxProbs = new List<double> { 0.0 }; // Gán giá trị mặc định
+                                }
+
+                                // Đảm bảo rằng số lượng MinProbs và MaxProbs phải tương ứng với số lượng giá trị trong Values
+                                int count = triple.Values.Count;
+                                for (int k = 0; k < count; k++)
+                                {
+                                    double minProb = k < triple.MinProbs.Count ? triple.MinProbs[k] : 0.0; // Sử dụng giá trị mặc định nếu thiếu
+                                    double maxProb = k < triple.MaxProbs.Count ? triple.MaxProbs[k] : 0.0; // Sử dụng giá trị mặc định nếu thiếu
+
+                                    // Biểu diễn giá trị triple dưới dạng { value }[ minProb, maxProb ]
+                                    tripleValues += $"{{ {triple.Values[k]} }}[ {minProb}, {maxProb} ]";
+
+                                    // Nếu còn phần tử tiếp theo, thêm dấu " || "
+                                    if (k < count - 1)
+                                        tripleValues += " || ";
+                                }
+                            }
+                            else
+                            {
+                                tripleValues = "{Invalid Triple Data}";  // Dữ liệu không hợp lệ
+                            }
+
+                            row[j] = tripleValues; // Gán giá trị cho cột tương ứng trong DataTable
+                        }
+                        else
+                        {
+                            row[j] = "{Out of Range}"; // Nếu vượt quá số cột, thêm giá trị lỗi
+                        }
+                    }
+
+                    // Kiểm tra xem hàng này đã có trong DataTable chưa (tránh duplicate)
+                    bool isDuplicate = false;
+                    foreach (DataRow existingRow in dtrelation.Rows)
+                    {
+                        bool isSame = true;
+                        for (int i = 0; i < dtrelation.Columns.Count; i++)
+                        {
+                            if (!existingRow[i].Equals(row[i]))
+                            {
+                                isSame = false;
+                                break;
+                            }
+                        }
+                        if (isSame)
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+
+                    // Nếu không bị duplicate, thêm row vào DataTable
+                    if (!isDuplicate)
+                    {
+                        dtrelation.Rows.Add(row); // Thêm hàng vào DataTable
+                    }
+                }
+
+                // Gán DataTable cho GridView
+                GridViewData.DataSource = dtrelation;
+            }
+            catch (Exception Ex)
+            {
+                XtraMessageBox.Show($"Error resetting GridView: {Ex.Message}");
+            }
+        }
+
 
         private void UpdateDataRowNumber()
         {
@@ -1548,25 +1659,27 @@ namespace PRDB_Sqlite.GUI
                 {
                     for (int k = 0; k < indexPrimaryKey.Count; k++)
                     {
+                        // Lấy giá trị từ GridView và tạo đối tượng ProbTriple
                         ProbTriple triple = new ProbTriple(GridViewData.Rows[i].Cells[k].Value.ToString());
 
-                        if (triple.Value.Count != 1)
+                        // Kiểm tra nếu số lượng giá trị trong triple không phải 1
+                        if (triple.Values.Count != 1)
                         {
-                            GridViewData.Rows[i].Cells[k].ErrorText = "This object is a primary key it only accepts single value ";
-                            GridViewData.CurrentCell = GridViewData.Rows[i].Cells[k];
-                            return;
-                        }
-                        //ktr xac xuat duy nhat
-                        if (triple.MinProb != 1.0 || triple.MaxProb != 1.0)
-                        {
-                            GridViewData.Rows[i].Cells[k].ErrorText = "This object is a primary key Its minprob and maxprob must be 1";
+                            GridViewData.Rows[i].Cells[k].ErrorText = "This object is a primary key, it only accepts a single value.";
                             GridViewData.CurrentCell = GridViewData.Rows[i].Cells[k];
                             return;
                         }
 
+                        // Kiểm tra nếu xác suất min và max không phải là 1
+                        if (triple.MinProbs[0] != 1.0 || triple.MaxProbs[0] != 1.0)
+                        {
+                            GridViewData.Rows[i].Cells[k].ErrorText = "This object is a primary key. Its minprob and maxprob must be 1.";
+                            GridViewData.CurrentCell = GridViewData.Rows[i].Cells[k];
+                            return;
+                        }
                     }
-
                 }
+
 
                 for (int i = 0; i < nRow - 1; i++)
                 {
@@ -1599,7 +1712,7 @@ namespace PRDB_Sqlite.GUI
 
                 currentRelationOpen.DropTableByTableName();
                 currentRelationOpen.CreateTableRelation();
-                currentRelationOpen.tuples.Clear();
+                currentRelationOpen.Tuples.Clear();
 
 
                 for (int i = 0; i < nRow; i++)
@@ -1612,7 +1725,7 @@ namespace PRDB_Sqlite.GUI
 
 
                     }
-                    currentRelationOpen.tuples.Add(tuple);
+                    currentRelationOpen.Tuples.Add(tuple);
                 }
                 currentRelationOpen.InsertTupleIntoTableRelation();
                 MessageBox.Show("Update successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1627,101 +1740,88 @@ namespace PRDB_Sqlite.GUI
         {
         }
 
+
         private void GridViewData_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
                 GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = null;
-                if (GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+
+                // Lấy giá trị từ ô vừa chỉnh sửa
+                var cellValue = GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (cellValue != null)
                 {
-                    string value = GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                    string value = cellValue.ToString().Trim();
 
+                    // Kiểm tra chuỗi có đúng định dạng Probabilistic Triple hay không
                     ProbTriple newProbTriple = new ProbTriple(value);
-
                     if (!newProbTriple.isProbTripleValue(value))
                     {
                         GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "Syntax Error! Cannot convert this value to a Probabilistic Triple!";
                         return;
                     }
 
-                    value = newProbTriple.GetStrValue();
-                    GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = value;
-
-                    if (!currentRelationOpen.Scheme.Attributes[e.ColumnIndex].Type.CheckDataType(value))
+                    // So sánh giá trị hiện tại và định dạng mong muốn
+                    string formattedValue = newProbTriple.GetStrValue();
+                    if (!string.Equals(value, formattedValue)) // So sánh chính xác chuỗi
                     {
-                        GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "Attribute value does not match the data type !";
+                        GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = formattedValue;
+                    }
+
+                    // Kiểm tra kiểu dữ liệu của thuộc tính
+                    if (!currentRelationOpen.Scheme.Attributes[e.ColumnIndex].Type.CheckDataType(formattedValue))
+                    {
+                        GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "Attribute value does not match the data type!";
                         return;
                     }
 
-                    #region check primarykey
-                    List<int> indexPrimaryKey = currentRelationOpen.Scheme.ListIndexPrimaryKey();
-
-                    int count = 0;
-                    bool flagEditOneCellPrimaryKey = false;
-
-
-                    foreach (int index in indexPrimaryKey)
-                    {
-                        ProbTriple triple = new ProbTriple();
-                        if (GridViewData.Rows[e.RowIndex].Cells[index].Value != null)
-                            triple = new ProbTriple(GridViewData.Rows[e.RowIndex].Cells[index].Value.ToString());
-
-                        if (checkPrimeryKey(index, e.RowIndex, triple))
-                        {
-                            count++;
-                        }
-                        if (index == e.ColumnIndex)
-                            flagEditOneCellPrimaryKey = true;
-                    }
-
-
-                    //ktr khoang xac xuat
-                    if (flagEditOneCellPrimaryKey == true && newProbTriple.Value.Count != 1)
-                    {
-                        GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "This object is a primary key it only accepts single value ";
-                        return;
-                    }
-                    //ktr xac xuat duy nhat
-
-                    if (flagEditOneCellPrimaryKey == true && (newProbTriple.MinProb != 1.0 || newProbTriple.MaxProb != 1.0))
-                    {
-                        GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "This object is a primary key Its minprob and maxprob must be 1";
-                        return;
-
-                    }
-
-
-
-                    if (count == indexPrimaryKey.Count)
-                    {
-                        for (int i = 0; i < indexPrimaryKey.Count; i++)
-                        {
-                            if (indexPrimaryKey[i] == e.ColumnIndex)
-                            {
-                                GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = " Cannot insert duplicate key in this object ";
-
-                                GridViewData.CurrentCell = GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                                return;
-                            }
-                        }
-
-                        GridViewData.Rows[e.RowIndex].Cells[indexPrimaryKey[indexPrimaryKey.Count - 1]].ErrorText = " Cannot insert duplicate key in this object ";
-                        GridViewData.CurrentCell = GridViewData.Rows[e.RowIndex].Cells[indexPrimaryKey[indexPrimaryKey.Count - 1]];
-                        return;
-
-                    }
-
-                    #endregion
-
+                    // Kiểm tra các ràng buộc khác (khóa chính...)
+                    ValidatePrimaryKey(e.RowIndex, e.ColumnIndex, newProbTriple);
                 }
                 else
                 {
+                    // Giá trị null hoặc rỗng
                     string defaultValue = currentRelationOpen.Scheme.Attributes[e.ColumnIndex].Type.getDefaultValue();
                     GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = defaultValue;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show("An error occurred: " + ex.Message);
+            }
+        }
+
+        private void ValidatePrimaryKey(int rowIndex, int columnIndex, ProbTriple newProbTriple)
+        {
+            List<int> indexPrimaryKey = currentRelationOpen.Scheme.ListIndexPrimaryKey();
+            bool isPrimaryKeyColumn = indexPrimaryKey.Contains(columnIndex);
+
+            if (isPrimaryKeyColumn)
+            {
+                if (newProbTriple.Values.Count != 1)
+                {
+                    GridViewData.Rows[rowIndex].Cells[columnIndex].ErrorText = "Primary key must only have a single value.";
+                    return;
+                }
+
+                if (newProbTriple.MinProbs[0] != 1.0 || newProbTriple.MaxProbs[0] != 1.0)
+                {
+                    GridViewData.Rows[rowIndex].Cells[columnIndex].ErrorText = "Primary key must have minprob and maxprob equal to 1.";
+                    return;
+                }
+
+                foreach (DataGridViewRow row in GridViewData.Rows)
+                {
+                    if (row.Index != rowIndex)
+                    {
+                        var otherCellValue = row.Cells[columnIndex].Value;
+                        if (otherCellValue != null && otherCellValue.ToString() == newProbTriple.GetStrValue())
+                        {
+                            GridViewData.Rows[rowIndex].Cells[columnIndex].ErrorText = "Duplicate primary key value!";
+                            return;
+                        }
+                    }
+                }
             }
         }
 
@@ -1816,22 +1916,35 @@ namespace PRDB_Sqlite.GUI
             {
                 GridViewValue.Rows.Clear();
 
-                ProbTriple triple = new ProbTriple(GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString());
+                string cellValue = GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
+                if (string.IsNullOrEmpty(cellValue))
+                {
+                    return;
+                }
 
-                GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = triple.GetStrValue();
+                ProbTriple triple = new ProbTriple(cellValue);
 
-                for (int i = 0; i < triple.Value.Count; i++)
+                // Chỉ cập nhật lại giá trị nếu thực sự cần thiết
+                string formattedValue = triple.GetStrValue();
+                if (!string.Equals(cellValue, formattedValue))
+                {
+                    GridViewData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = formattedValue;
+                }
+
+                for (int i = 0; i < triple.Values.Count; i++)
                 {
                     GridViewValue.Rows.Add();
-                    GridViewValue.Rows[i].Cells[0].Value = triple.Value[i];
-                    GridViewValue.Rows[i].Cells[1].Value = triple.MinProb;
-                    GridViewValue.Rows[i].Cells[2].Value = triple.MaxProb;
+                    GridViewValue.Rows[i].Cells[0].Value = triple.Values[i];
+                    GridViewValue.Rows[i].Cells[1].Value = triple.MinProbs[i];
+                    GridViewValue.Rows[i].Cells[2].Value = triple.MaxProbs[i];
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         #endregion
 
         #region Query
@@ -1868,11 +1981,15 @@ namespace PRDB_Sqlite.GUI
 
         public void OpenQueryByName(string NameQuery)
         {
+            //Tìm kiếm và lấy thông tin truy vấn
             currentQuery = this.probDatabase.Queries.SingleOrDefault(c => c.QueryName == NameQuery);
+            //Cập nhật tiêu đề
             xtraTabPageQuery.Text = "Query " + currentQuery.QueryName;
+            //chuyển đổi sang trang chứa nội dung truy vấn
             xtraTabDatabase.SelectedTabPage = xtraTabDatabase.TabPages[2];
             ribbonControl_Tuyen_Independence.SelectedPage = ribbonPageQuery;
 
+            //Xóa nội dung hiện tại
             txtQuery.Clear();
             txtQuery.Text = currentQuery.QueryString == "Empty" ? "" : currentQuery.QueryString;
             barButtonItemCloseCurrentQuery.Enabled = true;
@@ -2154,7 +2271,7 @@ namespace PRDB_Sqlite.GUI
                 {
                     txtMessage.Text = string.Empty;
 
-                    if (query.relationResult.tuples.Count <= 0)
+                    if (query.relationResult.Tuples.Count <= 0)
                     {
                         txtMessage.Text = "No tuple satisfies the condition";
                         xtraTabControlQueryResult.SelectedTabPageIndex = 1;
@@ -2168,7 +2285,7 @@ namespace PRDB_Sqlite.GUI
                         }
 
                         int j, i = -1;
-                        foreach (ProbTuple tuple in query.relationResult.tuples)
+                        foreach (ProbTuple tuple in query.relationResult.Tuples)
                         {
                             GridViewResult.Rows.Add();
 

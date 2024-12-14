@@ -4,8 +4,8 @@ namespace PRDB_Sqlite.BLL
 {
     public class ConditionModel
     {
-        public List<StrategyModel> StrategyModels { get; set; }
-        public List<string> OperatorStrategy { get; set; }
+        public List<StrategyModel> StrategyModels { get; set; } 
+        public List<string> OperatorStrategy { get; set; } 
         public double? MaxProb { get; set; }
         public double? MinProb { get; set; }
     }

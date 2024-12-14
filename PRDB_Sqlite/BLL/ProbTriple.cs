@@ -5,143 +5,148 @@ namespace PRDB_Sqlite.BLL
 {
     public class ProbTriple
     {
+
         #region Properties
+
         // Tập các giá trị
-        public List<string> Value { get; set; }
+        public List<object> Values { get; set; }
 
         // Tập xác suất cận dưới
-        public double MinProb { get; set; }
+        public List<double> MinProbs { get; set; }
 
         // Tập xác suất cận trên
-        public double MaxProb { get; set; }
+        public List<double> MaxProbs { get; set; }
 
         #endregion
+
         #region Methods
+
         public ProbTriple()
         {
-            this.Value = new List<string>();
-            this.MinProb = 1;
-            this.MaxProb = 1;
-
+            this.Values = new List<object>();
+            this.MinProbs = new List<double>();
+            this.MaxProbs = new List<double>();
         }
 
         // Tạo bộ ba xác suất từ chuỗi text
         public ProbTriple(string value)
         {
+            originalInput = value.Trim();
             try
             {
-                this.Value = new List<string>();
-                this.MinProb = 1;
-                this.MaxProb = 1;
+                this.Values = new List<object>();
+                this.MinProbs = new List<double>();
+                this.MaxProbs = new List<double>();
 
                 if (!value.Contains("{") && !value.Contains("}") && !value.Contains("[") && !value.Contains("]"))
                 {
-
-                    if (Value.Contains(","))
-                    {
-                        string[] seperator = { "," };
-                        string[] listValue = value.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (var item in listValue)
-                        {
-                            this.Value.Add(item);
-                        }
-                    }
-                    else
-                    {
-                        Value.Add(value);
-                    }
+                    Values.Add(value);
+                    MinProbs.Add(1);
+                    MaxProbs.Add(1);
                 }
                 else
                 {
-                    int j1, j2, j3, j4, j5;
-                    j1 = value.IndexOf('{');
-                    j2 = value.IndexOf('}');
-                    j3 = value.IndexOf('[');
-                    j4 = value.LastIndexOf(',');
-                    j5 = value.IndexOf(']');
+                    // Sử dụng Split để tách chuỗi theo dấu phân cách ||
+                    string[] parts = value.Split(new[] { " || " }, StringSplitOptions.None);
 
-                    this.MinProb = double.Parse(value.Substring(j3 + 1, j4 - j3 - 1));
-                    this.MaxProb = double.Parse(value.Substring(j4 + 1, j5 - j4 - 1));
-                    var valueString = value.Substring(j1 + 1, j2 - j1 - 1);
-
-                    string[] seperator = { "," };
-                    string[] listValue = valueString.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var item in listValue)
+                    foreach (var part in parts)
                     {
-                        this.Value.Add(item.Trim());
+                        int j1 = part.IndexOf('{');
+                        int j2 = part.IndexOf('}');
+                        int j3 = part.IndexOf('[');
+                        int j4 = part.LastIndexOf(',');
+                        int j5 = part.IndexOf(']');
+
+                        // Lấy giá trị trong { }
+                        var valueString = part.Substring(j1 + 1, j2 - j1 - 1);
+                        string[] listValue = valueString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        // Thêm từng giá trị vào Values
+                        foreach (var item in listValue)
+                        {
+                            this.Values.Add(item);
+                        }
+
+                        // Lấy xác suất [Min, Max]
+                        double minProb = double.Parse(part.Substring(j3 + 1, j4 - j3 - 1));
+                        double maxProb = double.Parse(part.Substring(j4 + 1, j5 - j4 - 1));
+
+                        // Cập nhật MinProbs và MaxProbs với số lượng tương ứng
+                        this.MinProbs.Add(minProb);
+                        this.MaxProbs.Add(maxProb);
                     }
 
                 }
             }
             catch
             {
-
+                // Xử lý lỗi
             }
         }
 
-        public ProbTriple(List<string> values, double maxProb, double minProb)
+
+        public ProbTriple(List<object> values, List<double> minProbs, List<double> maxProbs)
         {
-            try
-            {
-                this.Value = new List<string>();
-                this.MinProb = minProb;
-                this.MaxProb = maxProb;
-
-                Value.AddRange(values);
-            }
-            catch
-            {
-
-            }
+            this.Values = new List<object>(values);
+            this.MinProbs = new List<double>(minProbs);
+            this.MaxProbs = new List<double>(maxProbs);
         }
 
         public ProbTriple(ProbTriple triple)
         {
-            // TODO: Complete member initialization
-            this.Value = new List<string>();
-            this.MinProb = triple.MinProb;
-            this.MaxProb = triple.MaxProb;
-
-            foreach (var item in triple.Value)
-            {
-                this.Value.Add(item);
-            }
+            this.Values = new List<object>(triple.Values);
+            this.MinProbs = new List<double>(triple.MinProbs);
+            this.MaxProbs = new List<double>(triple.MaxProbs);
         }
 
         // Xuất bộ ba xác suất ra chuỗi giá trị
+        //public string GetStrValue()
+        //{
+        //    string strValue = "{";
+        //    for (int i = 0; i < Values.Count; i++)
+        //    {
+        //        strValue += Values[i].ToString();
+        //        strValue += " [" + MinProbs[i] + ", " + MaxProbs[i] + "]";
+        //        if (i < Values.Count - 1)
+        //            strValue += " || ";
+        //    }
+        //    strValue += "}";
+        //    return strValue;
+        //}
+
+        private string originalInput;
+
         public string GetStrValue()
         {
-            string strValue = "";
-            foreach (var item in Value)
+            if (!string.IsNullOrEmpty(originalInput))
             {
-                strValue += item;
-                strValue += ", ";
+                return originalInput;
             }
-            if (strValue.EndsWith(", "))
-            {
-                strValue = strValue.Remove(strValue.Length - 2);
-            }
-            if (this.MinProb != 1)
-            {
-                strValue = "{" + strValue + "}[ " + this.MinProb.ToString() + ", " + this.MaxProb + "]";
 
+            // Nếu originalInput chưa được gán giá trị, xây dựng chuỗi theo định dạng bộ
+            string strValue = "";
+            for (int i = 0; i < Values.Count; i++)
+            {
+                // Định dạng từng bộ giá trị và xác suất
+                strValue += "{ " + Values[i].ToString() + " }";
+                strValue += "[ " + MinProbs[i] + ", " + MaxProbs[i] + " ]";
+
+                // Thêm " || " nếu chưa phải phần tử cuối
+                if (i < Values.Count - 1)
+                {
+                    strValue += " || ";
+                }
             }
+
             return strValue;
         }
 
+
         public bool isProbTripleValue(string value)
         {
-            if (!value.Contains("{") && !value.Contains("}") && !value.Contains("[") && !value.Contains("]"))
-                return true;
-            else
-            {
-                if (!value.Contains("{") || !value.Contains("}") || !value.Contains("[") || !value.Contains("]"))
-                    return false;
-                return true;
-            }
+            return value.Contains("{") && value.Contains("}") && value.Contains("[") && value.Contains("]");
         }
+
         #endregion
     }
 }

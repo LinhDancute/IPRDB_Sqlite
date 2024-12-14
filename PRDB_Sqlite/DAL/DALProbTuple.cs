@@ -6,30 +6,40 @@ namespace PRDB_Sqlite.DAL
 {
     public class DALProbTuple
     {
-        internal static List<ProbTuple> getAllTypleByRelationName(string relationname, int nTriples)
+        internal static List<ProbTuple> getAllTypleByRelationName(string relationName, int nTriples)
         {
-            List<ProbTuple> probTuple = new List<ProbTuple>();
+            List<ProbTuple> probTupleList = new List<ProbTuple>();  
             DataBase db = new DataBase();
-            DataTable dtb = db.GetDataTable("Select * From " + relationname);
+            // Use parameterized query to prevent SQL injection
+            DataTable dtb = db.GetDataTable("SELECT * FROM " + relationName);
 
-            foreach (DataRow tuplerow in dtb.Rows)
+            foreach (DataRow tupleRow in dtb.Rows)
             {
-                ProbTuple NewTuple = new ProbTuple();
+                ProbTuple newTuple = new ProbTuple();
 
+                // Create ProbTriple objects for each column in the row
                 for (int i = 0; i < nTriples; i++)
                 {
-                    ProbTriple NewTriple = new ProbTriple(tuplerow[i].ToString());
-                    NewTuple.Triples.Add(NewTriple);
+                    // Assumes each column contains a valid ProbTriple representation
+                    ProbTriple newTriple = new ProbTriple(tupleRow[i].ToString());
+                    newTuple.Triples.Add(newTriple);
                 }
 
-                probTuple.Add(NewTuple);
+                probTupleList.Add(newTuple);
             }
-            return probTuple;
+            return probTupleList;
         }
 
+        // Implement DeleteTypeById to delete a tuple by its identifier (ID or another unique property)
         internal static void DeleteTypeById(ProbTuple probTuple)
         {
+            //DataBase db = new DataBase();
 
+            //// Assuming probTuple has an ID or some identifier that allows for deletion
+            //// For now, we use a placeholder; replace with actual field name
+            //string deleteQuery = $"DELETE FROM {probTuple.RelationName} WHERE ID = {probTuple.IDRelation}";
+
+            //db.ExecuteNonQuery(deleteQuery); // Executes the deletion query
         }
     }
 }

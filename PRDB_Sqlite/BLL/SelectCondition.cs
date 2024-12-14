@@ -694,7 +694,7 @@ namespace PRDB_Sqlite.BLL
             }
         }
 
-        private bool GetProbIntervalV2(string valueOne, string valueTwo, string operaterStr, double? maxProbOfCon = null, double? minProbOfCon = null)
+        private bool GetProbIntervalV2(string valueOne, string valueTwo, string operatorStr, double? maxProbOfCon = null, double? minProbOfCon = null)
         {
             double minProb = 0, maxProb = 0;
             int indexOne, countTripleOne;
@@ -702,123 +702,132 @@ namespace PRDB_Sqlite.BLL
 
             try
             {
-                if (SelectCondition.isCompareOperator(operaterStr))     // Biểu thức so sánh giữa một thuộc tính với một giá trị
+                if (SelectCondition.isCompareOperator(operatorStr)) // Case: Comparison between an attribute and a value
                 {
-                    indexOne = this.IndexOfAttribute(valueOne); // vị trí của thuộc tính trong ds các thuộc tính
+                    indexOne = this.IndexOfAttribute(valueOne); // Get the attribute index
                     if (indexOne == -1)
                         return false;
 
+                    // Handle quoted string in valueTwo
                     if (valueTwo.Contains("'"))
                     {
-
                         int count = valueTwo.Split(new char[] { '\'' }).Length - 1;
-
-
-                        if (valueTwo.Substring(0, 1) != "'")
+                        if (valueTwo.Substring(0, 1) != "'" || valueTwo.Substring(valueTwo.Length - 1, 1) != "'")
                         {
-                            MessageError = "Unclosed quotation mark before the character string " + valueTwo;
+                            MessageError = "Unclosed quotation mark in the character string " + valueTwo;
                             return false;
                         }
-
-                        if (valueTwo.Substring(valueTwo.Length - 1, 1) != "'")
-                        {
-                            MessageError = "Unclosed quotation mark after the character string " + valueTwo;
-                            return false;
-                        }
-
 
                         if (count != 2)
                         {
-                            MessageError = "Unclosed quotation mark at the character string " + valueTwo;
+                            MessageError = "Unclosed quotation mark in the character string " + valueTwo;
                             return false;
                         }
 
-                        valueTwo = valueTwo.Remove(0, 1);
-                        valueTwo = valueTwo.Remove(valueTwo.Length - 1, 1);
+                        valueTwo = valueTwo.Trim('\''); // Remove the quotation marks
                     }
 
-                    #region ProbDataType
-                    ProbDataType dataType = new ProbDataType();
-                    dataType.TypeName = Attributes[indexOne].Type.TypeName;
-                    dataType.DataType = Attributes[indexOne].Type.DataType;
-                    dataType.Domain = Attributes[indexOne].Type.Domain;
-                    dataType.DomainString = Attributes[indexOne].Type.DomainString;
-                    #endregion
+                    // Check if the data type of valueTwo is compatible with the attribute's type
+                    ProbDataType dataType = new ProbDataType
+                    {
+                        TypeName = Attributes[indexOne].Type.TypeName,
+                        DataType = Attributes[indexOne].Type.DataType,
+                        Domain = Attributes[indexOne].Type.Domain,
+                        DomainString = Attributes[indexOne].Type.DomainString
+                    };
 
                     if (!dataType.CheckDataTypeOfVariables(valueTwo))
                     {
-                        MessageError = String.Format("Conversion failed when converting the varchar value {0} to data type {1}.", valueTwo, dataType.DataType);
+                        MessageError = $"Conversion failed when converting the varchar value {valueTwo} to data type {dataType.DataType}.";
                         return false;
                     }
 
-                    #region ProbDataType
-                    countTripleOne = tuple.Triples[indexOne].Value.Count; // số lượng các cặp xác xuất trong thuộc tính
-                    var listValue = tuple.Triples[indexOne].Value;
-                    var minProbV = tuple.Triples[indexOne].MinProb;
-                    var maxProbV = tuple.Triples[indexOne].MaxProb;
-                    #endregion
+                    // Fetch the triples for the attribute
+                    countTripleOne = tuple.Triples[indexOne].Values.Count; // Number of probability pairs
+                    var listValue = tuple.Triples[indexOne].Values;
+                    var minProbV = tuple.Triples[indexOne].MinProbs;
+                    var maxProbV = tuple.Triples[indexOne].MaxProbs;
 
-                    if (maxProbV == 1 && minProbV == 1 && !maxProbOfCon.HasValue && !minProbOfCon.HasValue)
+                    // Check if all probabilities are 1 and no constraints on probabilities
+                    if (minProbV.All(x => x == 1) && maxProbV.All(x => x == 1) && !maxProbOfCon.HasValue && !minProbOfCon.HasValue)
                     {
-                        var kp = listValue.Any(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName));
-                        return kp;
+                        return listValue.Any(x => CompareTriple(x, valueTwo, operatorStr, dataType.TypeName));
                     }
                     else
                     {
-                        var count = listValue.Where(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName)).Count();
+                        var count = listValue.Count(x => CompareTriple(x, valueTwo, operatorStr, dataType.TypeName));
                         if (count > 0)
                         {
-                            minProb = (count / (float)countTripleOne) * minProbV;
-                            maxProb = (count / (float)countTripleOne) * maxProbV;
+                            // Calculate the min and max probabilities
+                            minProb = (count / (double)countTripleOne) * minProbV.Average();
+                            maxProb = (count / (double)countTripleOne) * maxProbV.Average();
 
+                            // Check if the resulting probabilities fall within the specified constraint
                             if (maxProbOfCon.HasValue && minProbOfCon.HasValue)
                             {
-                                return minProbOfCon.Value <= minProb && maxProb <= maxProbOfCon;
+                                return minProbOfCon.Value <= minProb && maxProb <= maxProbOfCon.Value;
                             }
                         }
-                        return false;
                     }
+                    return false;
                 }
-                else                     // Biểu thức kết hợp giữa hai khoảng xác suất
+                else // Case: Combination of two probability intervals
                 {
                     double minProbOne, minProbTwo, maxProbOne, maxProbTwo;
-                    string[] StrProb;
+                    string[] strProb;
 
-                    valueOne = valueOne.Replace("[", "");  // [L,U]
-                    valueOne = valueOne.Replace("]", "");
+                    // Parse the first probability interval (valueOne)
+                    valueOne = valueOne.Trim('[', ']');
+                    strProb = valueOne.Split(',');
+                    minProbOne = Convert.ToDouble(strProb[0]);
+                    maxProbOne = Convert.ToDouble(strProb[1]);
 
-                    StrProb = valueOne.Split(',');
-                    minProbOne = Convert.ToDouble(StrProb[0]);
-                    maxProbOne = Convert.ToDouble(StrProb[1]);
+                    // Parse the second probability interval (valueTwo)
+                    valueTwo = valueTwo.Trim('[', ']');
+                    strProb = valueTwo.Split(',');
+                    minProbTwo = Convert.ToDouble(strProb[0]);
+                    maxProbTwo = Convert.ToDouble(strProb[1]);
 
-                    valueTwo = valueTwo.Replace("[", "");  // [L,U]
-                    valueTwo = valueTwo.Replace("]", "");
-
-                    StrProb = valueTwo.Split(',');
-                    minProbTwo = Convert.ToDouble(StrProb[0]);
-                    maxProbTwo = Convert.ToDouble(StrProb[1]);
-
-                    switch (operaterStr)
+                    // Combine the intervals based on the operator
+                    switch (operatorStr)
                     {
-                        case "⊗_ig": minProb = Math.Max(0, minProbOne + minProbTwo - 1); maxProb = Math.Min(maxProbOne, maxProbTwo); break;
-                        case "⊗_in": minProb = minProbOne * minProbTwo; maxProb = maxProbOne * maxProbTwo; break;
-                        case "⊗_me": minProb = 0; maxProb = 0; break;
-                        case "⊕_ig": minProb = Math.Max(minProbOne, minProbTwo); maxProb = Math.Min(1, maxProbOne + maxProbTwo); break;
-                        case "⊕_in": minProb = minProbOne + minProbTwo - (minProbOne * minProbTwo); maxProb = maxProbOne + maxProbTwo - (maxProbOne * maxProbTwo); break;
-                        case "⊕_me": minProb = Math.Min(1, minProbOne + minProbTwo); maxProb = Math.Min(1, maxProbOne + maxProbTwo); break;
+                        case "⊗_ig":
+                            minProb = Math.Max(0, minProbOne + minProbTwo - 1);
+                            maxProb = Math.Min(maxProbOne, maxProbTwo);
+                            break;
+                        case "⊗_in":
+                            minProb = minProbOne * minProbTwo;
+                            maxProb = maxProbOne * maxProbTwo;
+                            break;
+                        case "⊗_me":
+                            minProb = 0;
+                            maxProb = 0;
+                            break;
+                        case "⊕_ig":
+                            minProb = Math.Max(minProbOne, minProbTwo);
+                            maxProb = Math.Min(1, maxProbOne + maxProbTwo);
+                            break;
+                        case "⊕_in":
+                            minProb = minProbOne + minProbTwo - (minProbOne * minProbTwo);
+                            maxProb = maxProbOne + maxProbTwo - (maxProbOne * maxProbTwo);
+                            break;
+                        case "⊕_me":
+                            minProb = Math.Min(1, minProbOne + minProbTwo);
+                            maxProb = Math.Min(1, maxProbOne + maxProbTwo);
+                            break;
                         default:
                             MessageError = "Incorrect syntax near 'where'.";
-                            break;
-
+                            return false;
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageError = "Incorrect syntax near 'where'.";
+                MessageError = "Incorrect syntax near 'where'. " + ex.Message;
                 return false;
             }
-            return false;
+
+            return true; // Successfully processed the intervals
         }
 
         private List<double> GetProbIntervalV3(string valueOne, string valueTwo, string operaterStr)
@@ -851,7 +860,6 @@ namespace PRDB_Sqlite.BLL
                             return null;
                         }
 
-
                         if (count != 2)
                         {
                             MessageError = "Unclosed quotation mark at the character string " + valueTwo;
@@ -870,6 +878,7 @@ namespace PRDB_Sqlite.BLL
                     dataType.DomainString = Attributes[indexOne].Type.DomainString;
                     #endregion
 
+                    // Kiểm tra dữ liệu có thể chuyển đổi được không
                     if (!dataType.CheckDataTypeOfVariables(valueTwo))
                     {
                         MessageError = String.Format("Conversion failed when converting the varchar value {0} to data type {1}.", valueTwo, dataType.DataType);
@@ -877,35 +886,43 @@ namespace PRDB_Sqlite.BLL
                     }
 
                     #region ProbDataType
-                    countTripleOne = tuple.Triples[indexOne].Value.Count; // số lượng các cặp xác xuất trong thuộc tính
-                    var listValue = tuple.Triples[indexOne].Value;
-                    var minProbV = tuple.Triples[indexOne].MinProb;
-                    var maxProbV = tuple.Triples[indexOne].MaxProb;
+                    countTripleOne = tuple.Triples[indexOne].Values.Count; // số lượng các cặp xác suất trong thuộc tính
+                    var listValue = tuple.Triples[indexOne].Values;
+                    var minProbV = tuple.Triples[indexOne].MinProbs;
+                    var maxProbV = tuple.Triples[indexOne].MaxProbs;
                     #endregion
 
+                    // Lọc danh sách theo điều kiện so sánh và tính toán xác suất
                     var result = listValue.Where(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName)).Count();
 
                     if (result > 0)
                     {
-                        minProb = (result / (float)countTripleOne) * minProbV;
-                        maxProb = (result / (float)countTripleOne) * maxProbV;
+                        // Tính toán lại minProb và maxProb
+                        minProb = (result / (float)countTripleOne) * minProbV.Average(); // Lấy trung bình nếu có nhiều giá trị cận dưới
+                        maxProb = (result / (float)countTripleOne) * maxProbV.Average(); // Lấy trung bình nếu có nhiều giá trị cận trên
 
                         return new List<double> { minProb, maxProb };
                     }
                     else
                     {
+                        // Trả về khoảng xác suất nếu không tìm thấy kết quả phù hợp
                         return new List<double> { 0, 0 };
                     }
                 }
 
+                // Trường hợp nếu không phải là biểu thức so sánh
+                MessageError = "Incorrect operator or query structure.";
                 return null;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageError = "Incorrect syntax near 'where'.";
+                // Xử lý lỗi và hiển thị thông báo lỗi chi tiết
+                MessageError = $"Error occurred: {ex.Message}";
                 return null;
             }
         }
+
+
 
         public int IndexOfAttribute(string S)
         {

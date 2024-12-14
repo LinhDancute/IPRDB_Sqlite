@@ -7,10 +7,125 @@ namespace PRDB_Sqlite.DAL
 {
     public class DALProbRelation
     {
-        internal static List<BLL.ProbRelation> getAllRelation()
-        {
-            //"SELECT * FROM SystemRelation", "system_relation")
+        //internal static List<BLL.ProbRelation> getAllRelation()
+        //{
+        //    //"SELECT * FROM SystemRelation", "system_relation")
 
+        //    List<ProbRelation> relations = new List<ProbRelation>();
+        //    DataBase db = new DataBase();
+        //    DataSet dts = new DataSet();
+        //    dts.Tables.Add(db.GetDataTable("SELECT * FROM SystemRelation", "system_relation"));
+
+        //    foreach (DataRow row in dts.Tables["system_relation"].Rows)
+        //    {
+        //        string relationname = row[1].ToString();
+        //        int schemeID = Convert.ToInt16(row[2]);
+        //        ProbScheme schemeName = new ProbScheme(schemeID).getSchemeById();
+        //        List<ProbTuple> probTuples = new List<ProbTuple>();
+        //        int nTriples = schemeName.Attributes.Count;
+        //        probTuples = new ProbTuple().getAllTypleByRelationName(relationname, nTriples);
+        //        ProbRelation relation = new ProbRelation(Convert.ToInt16(row[0]), relationname, probTuples, schemeName);
+        //        relations.Add(relation);
+        //    }
+
+        //    return relations;
+        //}
+
+        //internal static void DropTableByTableName(ProbRelation probRelation)
+        //{
+        //    DataBase db = new DataBase();
+        //    if (!db.DropTable(probRelation.RelationName))
+        //        throw new Exception(db.errorMessage);
+
+        //}
+
+        //internal static void DeleteAllRelation()
+        //{
+        //    DataBase db = new DataBase();
+        //    if (!db.Update("DELETE FROM SystemRelation"))
+        //        throw new Exception(db.errorMessage);
+        //}
+
+        //internal static void InsertSystemRelation(ProbRelation probRelation)
+        //{
+
+        //    if (probRelation.IDRelation == -1)
+        //    {
+        //        probRelation.IDRelation = new DataBase().GetMaxIdInTable("SystemRelation");
+        //    }
+
+
+        //    DataBase db = new DataBase();
+        //    string SQL = "";
+        //    SQL = "";
+        //    SQL += "INSERT INTO SystemRelation VALUES ( ";
+        //    SQL += probRelation.IDRelation + ",";
+        //    SQL += "'" + probRelation.RelationName + "'" + ",";
+        //    SQL += probRelation.Scheme.IDScheme;
+        //    SQL += " );";
+        //    if (!db.Update(SQL))
+        //    {
+
+        //        throw new Exception(db.errorMessage);
+        //    }
+        //}
+
+        //internal static void CreateTableRelation(ProbRelation probRelation)
+        //{
+        //    if (probRelation.Scheme.Attributes.Count > 0)
+        //    {
+        //        DataBase db = new DataBase();
+        //        string SQL = "";
+        //        SQL += "CREATE TABLE " + probRelation.RelationName + " ( ";
+        //        foreach (ProbAttribute attribute in probRelation.Scheme.Attributes)
+        //        {
+        //            SQL += attribute.AttributeName + " " + "TEXT" + ", ";
+        //        }
+        //        SQL = SQL.Remove(SQL.LastIndexOf(','), 1);
+        //        SQL += " ); ";
+
+        //        if (!db.CreateTable(SQL))
+        //            throw new Exception(db.errorMessage);
+        //    }
+        //}
+
+        //internal static void InsertTupleIntoTableRelation(ProbRelation probRelation)
+        //{
+        //    DataBase db = new DataBase();
+        //    if (probRelation.tuples.Count > 0)
+        //    {
+        //        foreach (ProbTuple tuple in probRelation.tuples)
+        //        {
+        //            string SQL = "";
+        //            SQL += "INSERT INTO " + probRelation.RelationName + " VALUES (";
+        //            foreach (ProbTriple triple in tuple.Triples)
+        //            {
+        //                SQL += "'" + triple.GetStrValue() + "'" + ",";
+        //            }
+        //            SQL = SQL.Remove(SQL.LastIndexOf(','), 1);
+        //            SQL += " );  ";
+
+        //            if (!db.Update(SQL))
+        //                throw new Exception(db.errorMessage);
+        //        }
+
+        //    }
+
+
+
+        //}
+
+        //internal static void DeleteRelationById(ProbRelation probRelation)
+        //{
+
+        //    DataBase db = new DataBase();
+        //    if (!db.Update("DELETE FROM SystemRelation where ID = " + probRelation.IDRelation))
+        //        throw new Exception(db.errorMessage);
+        //}
+
+
+        internal static List<ProbRelation> getAllRelation()
+        {
             List<ProbRelation> relations = new List<ProbRelation>();
             DataBase db = new DataBase();
             DataSet dts = new DataSet();
@@ -18,27 +133,28 @@ namespace PRDB_Sqlite.DAL
 
             foreach (DataRow row in dts.Tables["system_relation"].Rows)
             {
-                string relationname = row[1].ToString();
-                int schemeID = Convert.ToInt16(row[2]);
-                ProbScheme schemeName = new ProbScheme(schemeID).getSchemeById();
-                List<ProbTuple> probTuples = new List<ProbTuple>();
-                int nTriples = schemeName.Attributes.Count;
-                probTuples = new ProbTuple().getAllTypleByRelationName(relationname, nTriples);
-                ProbRelation relation = new ProbRelation(Convert.ToInt16(row[0]), relationname, probTuples, schemeName);
+                string relationName = row["RelationName"].ToString();
+                int schemeID = Convert.ToInt32(row["SchemeID"]);
+
+                // Lấy thông tin lược đồ
+                ProbScheme scheme = new ProbScheme(schemeID).getSchemeById();
+
+                // Lấy các tuple
+                List<ProbTuple> probTuples = DALProbTuple.getAllTypleByRelationName(relationName, scheme.Attributes.Count);
+
+                // Tạo đối tượng ProbRelation
+                ProbRelation relation = new ProbRelation(Convert.ToInt32(row["ID"]), relationName, probTuples, scheme);
                 relations.Add(relation);
             }
 
             return relations;
         }
 
-
-
         internal static void DropTableByTableName(ProbRelation probRelation)
         {
             DataBase db = new DataBase();
             if (!db.DropTable(probRelation.RelationName))
                 throw new Exception(db.errorMessage);
-
         }
 
         internal static void DeleteAllRelation()
@@ -50,16 +166,13 @@ namespace PRDB_Sqlite.DAL
 
         internal static void InsertSystemRelation(ProbRelation probRelation)
         {
-
             if (probRelation.IDRelation == -1)
             {
                 probRelation.IDRelation = new DataBase().GetMaxIdInTable("SystemRelation");
             }
 
-
             DataBase db = new DataBase();
             string SQL = "";
-            SQL = "";
             SQL += "INSERT INTO SystemRelation VALUES ( ";
             SQL += probRelation.IDRelation + ",";
             SQL += "'" + probRelation.RelationName + "'" + ",";
@@ -67,7 +180,6 @@ namespace PRDB_Sqlite.DAL
             SQL += " );";
             if (!db.Update(SQL))
             {
-
                 throw new Exception(db.errorMessage);
             }
         }
@@ -94,9 +206,9 @@ namespace PRDB_Sqlite.DAL
         internal static void InsertTupleIntoTableRelation(ProbRelation probRelation)
         {
             DataBase db = new DataBase();
-            if (probRelation.tuples.Count > 0)
+            if (probRelation.Tuples.Count > 0)
             {
-                foreach (ProbTuple tuple in probRelation.tuples)
+                foreach (ProbTuple tuple in probRelation.Tuples)
                 {
                     string SQL = "";
                     SQL += "INSERT INTO " + probRelation.RelationName + " VALUES (";
@@ -110,16 +222,11 @@ namespace PRDB_Sqlite.DAL
                     if (!db.Update(SQL))
                         throw new Exception(db.errorMessage);
                 }
-
             }
-
-
-
         }
 
         internal static void DeleteRelationById(ProbRelation probRelation)
         {
-
             DataBase db = new DataBase();
             if (!db.Update("DELETE FROM SystemRelation where ID = " + probRelation.IDRelation))
                 throw new Exception(db.errorMessage);
