@@ -48,28 +48,29 @@ namespace IPRDB_Sqlite.GUI
 
         private void Form_Main_Load(object sender, EventArgs e)
         {
-
+            //Các nút như "Append", "Edit", "EndEdit", "CancelEdit", và "Remove" trong điều khiển
+            //gridControlScheme bị ẩn. Đây là các nút để quản lý dữ liệu trong GridControl,
+            //nhưng chúng không cần hiển thị ngay khi form được tải.
             this.gridControlScheme.EmbeddedNavigator.Buttons.Append.Visible = false;
             this.gridControlScheme.EmbeddedNavigator.Buttons.Edit.Visible = false;
             this.gridControlScheme.EmbeddedNavigator.Buttons.EndEdit.Visible = false;
             this.gridControlScheme.EmbeddedNavigator.Buttons.CancelEdit.Visible = false;
             this.gridControlScheme.EmbeddedNavigator.Buttons.Remove.Visible = false;
 
-
             LoadPRDB();
-
-
         }
 
         #region Active DB
 
         private void LoadPRDB()
         {
-            BindingNavigatorData.Visible = true;
-            SwitchValueState(true);
-            ActivateDatabase(false);
+            BindingNavigatorData.Visible = true; //hiển thị thanh BindingNavigatorData
+            SwitchValueState(true); //bật các chức năng cần thiết cho cơ sở dữ liệu
+            ActivateDatabase(false); //cài đặt trạng thái giao diện.
         }
 
+        //đặt trạng thái kích hoạt của các trang giao diện liên quan đến lược đồ (Schema),
+        //quan hệ (Relation), và truy vấn (Query).
         private void ActivateDatabase(bool state)
         {
 
@@ -80,6 +81,7 @@ namespace IPRDB_Sqlite.GUI
 
         }
 
+        //điều chỉnh khả năng tương tác của menu với người dùng
         private void ResetMenuBar(bool state)
         {
 
@@ -91,9 +93,12 @@ namespace IPRDB_Sqlite.GUI
 
         }
 
+        //Đặt lại trạng thái của trang truy vấn
         private void ResetQueryPage(bool state)
         {
+            //xóa nội dung
             currentQuery = null;
+            //Vô hiệu hóa hoặc kích hoạt các nút trên trang Query tùy vào giá trị state (true/false).
             xtraTabDatabase.TabPages[2].Text = "Query";
             txtQuery.Text = "";
             barButtonItemExcuteQuery.Enabled = false;
@@ -106,6 +111,7 @@ namespace IPRDB_Sqlite.GUI
 
         }
 
+        //Đặt lại giao diện của trang quan hệ, làm sạch dữ liệu và cột trong GridViewData và GridViewValue.
         private void ResetRelationPage(bool state)
         {
             xtraTabDatabase.TabPages[1].Text = "Relation";
@@ -113,12 +119,15 @@ namespace IPRDB_Sqlite.GUI
             GridViewData.Columns.Clear();
             UpdateDataRowNumber();
             GridViewValue.Rows.Clear();
+
+            //Cập nhật các nút liên quan đến việc xóa, làm mới và cập nhật dữ liệu của trang Relation
             Btn_Data_DeleteRow.Enabled = state;
             Btn_Data_ClearData.Enabled = state;
             Btn_Data_UpdateData.Enabled = state;
             xtraTabPageRelation.PageEnabled = state;
         }
 
+        //Đặt lại giao diện của trang lược đồ
         private void ResetSchemePage(bool state)
         {
             xtraTabDatabase.TabPages[0].Text = "Scheme";
