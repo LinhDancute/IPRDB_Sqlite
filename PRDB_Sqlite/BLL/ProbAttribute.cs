@@ -5,6 +5,10 @@ namespace PRDB_Sqlite.BLL
 {
     public class ProbAttribute
     {
+        //Lớp này quản lý các thuộc tính trong lược đồ PRDB, lưu trữ thông tin như thuộc tính là khóa chính hay không,
+        //tên thuộc tính, kiểu dữ liệu (ProbDataType), và lược đồ liên kết (ProbScheme).
+        //Nó cung cấp các phương thức tương tác với cơ sở dữ liệu, ví dụ như lấy thuộc tính theo ID lược đồ,
+        //xóa thuộc tính, và chèn thuộc tính mới.
         #region Properties
         public bool PrimaryKey { get; set; }
 

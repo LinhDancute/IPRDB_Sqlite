@@ -4,6 +4,11 @@ using System.Windows.Forms;
 
 namespace PRDB_Sqlite.BLL
 {
+    //Lớp này quản lý các kiểu dữ liệu khác nhau được sử dụng trong PRDB.
+    //Nó xử lý các kiểu dữ liệu định nghĩa trước (ví dụ: Int16, String, Double)
+    //và kiểu dữ liệu do người dùng định nghĩa (có thể có miền giá trị).
+    //Nó bao gồm các phương thức để kiểm tra nếu một giá trị phù hợp với kiểu dữ liệu,
+    //xác thực giá trị miền, và phân tích thông tin kiểu dữ liệu từ chuỗi.
     public class ProbDataType
     {
         #region Properties

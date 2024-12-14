@@ -131,6 +131,7 @@ namespace PRDB_Sqlite.BLL
             return strValue;
         }
 
+        //Kiểm tra xem chuỗi có phải là bộ ba xác suất hợp lệ hay không.
         public bool isProbTripleValue(string value)
         {
             if (!value.Contains("{") && !value.Contains("}") && !value.Contains("[") && !value.Contains("]"))

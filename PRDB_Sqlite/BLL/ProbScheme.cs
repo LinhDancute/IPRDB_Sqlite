@@ -61,7 +61,7 @@ namespace PRDB_Sqlite.BLL
 
         #endregion
 
-
+        //Trả về danh sách tên thuộc tính viết hoa.
         internal List<string> ListOfAttributeNameToUpper()
         {
             List<string> list = new List<string>();
@@ -89,6 +89,7 @@ namespace PRDB_Sqlite.BLL
             return list;
         }
 
+        //Trả về danh sách chỉ số các thuộc tính là khóa chính.
         internal List<int> ListIndexPrimaryKey()
         {
             var indexs = new List<int>();

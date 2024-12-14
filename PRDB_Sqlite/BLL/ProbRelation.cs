@@ -57,6 +57,7 @@ namespace PRDB_Sqlite.BLL
 
 
         #endregion
+        //Các phương thức DAL: Tương tác với cơ sở dữ liệu
 
         internal List<ProbRelation> getAllRelation()
         {
