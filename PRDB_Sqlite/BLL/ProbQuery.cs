@@ -1,7 +1,7 @@
-﻿using IPRDB_Sqlite.DAL;
+﻿using PRDB_Sqlite.DAL;
 using System.Collections.Generic;
 
-namespace IPRDB_Sqlite.BLL
+namespace PRDB_Sqlite.BLL
 {
     public class ProbQuery
     {
@@ -45,7 +45,6 @@ namespace IPRDB_Sqlite.BLL
         {
             this.QueryString = query;
         }
-        //Loại bỏ các khoảng trắng dư thừa trong chuỗi.
 
         public string CutSpareSpace(string S)
         {
@@ -60,7 +59,6 @@ namespace IPRDB_Sqlite.BLL
         }
 
         #endregion
-        //Các phương thức tương tác với cơ sở dữ liệu
 
         internal List<ProbQuery> getAllQuery()
         {

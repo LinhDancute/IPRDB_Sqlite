@@ -1,8 +1,8 @@
-﻿using IPRDB_Sqlite.DAL;
+﻿using PRDB_Sqlite.DAL;
 using System;
 using System.Collections.Generic;
 
-namespace IPRDB_Sqlite.BLL
+namespace PRDB_Sqlite.BLL
 {
     public class ProbScheme
     {
@@ -61,7 +61,7 @@ namespace IPRDB_Sqlite.BLL
 
         #endregion
 
-        //Trả về danh sách tên thuộc tính viết hoa.
+
         internal List<string> ListOfAttributeNameToUpper()
         {
             List<string> list = new List<string>();
@@ -89,7 +89,6 @@ namespace IPRDB_Sqlite.BLL
             return list;
         }
 
-        //Trả về danh sách chỉ số các thuộc tính là khóa chính.
         internal List<int> ListIndexPrimaryKey()
         {
             var indexs = new List<int>();

@@ -1,4 +1,4 @@
-﻿namespace IPRDB_Sqlite.GUI
+﻿namespace PRDB_Sqlite.GUI
 {
     partial class Form_Main
     {
@@ -1582,7 +1582,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "PRDB Visual Management System";
+            this.Text = "IPRDB Visual Management System";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form_Main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl_Tuyen_Independence)).EndInit();

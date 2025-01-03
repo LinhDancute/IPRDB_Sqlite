@@ -1,14 +1,12 @@
-﻿using IPRDB_Sqlite.DAL;
+﻿using PRDB_Sqlite.DAL;
 using System.Collections.Generic;
 using System.Data;
 
-namespace IPRDB_Sqlite.BLL
+
+namespace PRDB_Sqlite.BLL
 {
     public class ProbDatabase
     {
-        //Đại diện cho cơ sở dữ liệu PRDB, chứa thông tin như tên cơ sở dữ liệu,
-        //đường dẫn, chuỗi kết nối, và danh sách lược đồ (ProbScheme), quan hệ (ProbRelation), và truy vấn (ProbQuery).
-        //Các phương thức bao gồm tạo mới cơ sở dữ liệu, mở cơ sở dữ liệu hiện có, và lưu cơ sở dữ liệu.
         #region Properties
 
         // Tên cơ sở dữ liệu

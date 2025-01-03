@@ -1,8 +1,8 @@
-﻿using IPRDB_Sqlite.BLL;
+﻿using PRDB_Sqlite.BLL;
 using System;
 using System.Linq;
 using System.Windows.Forms;
-namespace IPRDB_Sqlite.GUI
+namespace PRDB_Sqlite.GUI
 {
     public partial class frm__new_relation : DevExpress.XtraEditors.XtraForm
     {

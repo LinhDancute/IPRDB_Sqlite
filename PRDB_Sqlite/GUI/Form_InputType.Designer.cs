@@ -49,73 +49,64 @@
             // labelControl1
             // 
             this.labelControl1.Appearance.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
-            this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Location = new System.Drawing.Point(118, 38);
-            this.labelControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.labelControl1.Location = new System.Drawing.Point(79, 26);
             this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(369, 53);
+            this.labelControl1.Size = new System.Drawing.Size(244, 35);
             this.labelControl1.TabIndex = 0;
             this.labelControl1.Text = "Select Data Type";
             // 
             // labelControl2
             // 
-            this.labelControl2.Location = new System.Drawing.Point(34, 148);
-            this.labelControl2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.labelControl2.Location = new System.Drawing.Point(23, 101);
             this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(83, 19);
+            this.labelControl2.Size = new System.Drawing.Size(57, 13);
             this.labelControl2.TabIndex = 1;
             this.labelControl2.Text = "Data Type :";
             // 
             // lblTypeName
             // 
             this.lblTypeName.Enabled = false;
-            this.lblTypeName.Location = new System.Drawing.Point(34, 213);
-            this.lblTypeName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lblTypeName.Location = new System.Drawing.Point(23, 146);
             this.lblTypeName.Name = "lblTypeName";
-            this.lblTypeName.Size = new System.Drawing.Size(92, 19);
+            this.lblTypeName.Size = new System.Drawing.Size(61, 13);
             this.lblTypeName.TabIndex = 2;
             this.lblTypeName.Text = "Type Name :";
             // 
             // lblListValueType
             // 
             this.lblListValueType.Enabled = false;
-            this.lblListValueType.Location = new System.Drawing.Point(34, 279);
-            this.lblListValueType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lblListValueType.Location = new System.Drawing.Point(23, 191);
             this.lblListValueType.Name = "lblListValueType";
-            this.lblListValueType.Size = new System.Drawing.Size(138, 19);
+            this.lblListValueType.Size = new System.Drawing.Size(92, 13);
             this.lblListValueType.TabIndex = 3;
             this.lblListValueType.Text = "List of Value Type :";
             // 
             // txtUserDefined
             // 
             this.txtUserDefined.Enabled = false;
-            this.txtUserDefined.Location = new System.Drawing.Point(183, 203);
-            this.txtUserDefined.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtUserDefined.Location = new System.Drawing.Point(122, 139);
             this.txtUserDefined.Name = "txtUserDefined";
-            // 
-            // 
-            // 
             this.txtUserDefined.Properties.Mask.BeepOnError = true;
             this.txtUserDefined.Properties.Mask.EditMask = "[a-zA-Z0-9]+";
             this.txtUserDefined.Properties.Mask.MaskType = DevExpress.XtraEditors.Mask.MaskType.RegEx;
             this.txtUserDefined.Properties.Mask.ShowPlaceHolders = false;
-            this.txtUserDefined.Size = new System.Drawing.Size(398, 28);
+            this.txtUserDefined.Size = new System.Drawing.Size(265, 20);
             this.txtUserDefined.TabIndex = 1;
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(320, 506);
-            this.btnOk.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOk.Location = new System.Drawing.Point(213, 346);
             this.btnOk.Name = "btnOk";
+            this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 3;
             this.btnOk.Text = "&OK";
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(468, 506);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Location = new System.Drawing.Point(312, 346);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -123,10 +114,9 @@
             // txtListValue
             // 
             this.txtListValue.Enabled = false;
-            this.txtListValue.Location = new System.Drawing.Point(34, 322);
-            this.txtListValue.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtListValue.Location = new System.Drawing.Point(23, 220);
             this.txtListValue.Name = "txtListValue";
-            this.txtListValue.Size = new System.Drawing.Size(546, 159);
+            this.txtListValue.Size = new System.Drawing.Size(364, 109);
             this.txtListValue.TabIndex = 2;
             this.txtListValue.TextChanged += new System.EventHandler(this.txtListValue_TextChanged_1);
             this.txtListValue.Leave += new System.EventHandler(this.txtListValue_Leave);
@@ -137,12 +127,8 @@
             // 
             // ComboBox_DataType
             // 
-            this.ComboBox_DataType.Location = new System.Drawing.Point(183, 137);
-            this.ComboBox_DataType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ComboBox_DataType.Location = new System.Drawing.Point(122, 94);
             this.ComboBox_DataType.Name = "ComboBox_DataType";
-            // 
-            // 
-            // 
             this.ComboBox_DataType.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.ComboBox_DataType.Properties.Items.AddRange(new object[] {
@@ -159,15 +145,15 @@
             "Binary",
             "Currency",
             "UserDefined"});
-            this.ComboBox_DataType.Size = new System.Drawing.Size(398, 28);
+            this.ComboBox_DataType.Size = new System.Drawing.Size(265, 20);
             this.ComboBox_DataType.TabIndex = 0;
             this.ComboBox_DataType.SelectedIndexChanged += new System.EventHandler(this.ComboBox_DataType_SelectedIndexChanged);
             // 
             // Form_InputType
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(422, 381);
+            this.ClientSize = new System.Drawing.Size(414, 381);
             this.Controls.Add(this.ComboBox_DataType);
             this.Controls.Add(this.txtListValue);
             this.Controls.Add(this.btnCancel);
@@ -178,11 +164,10 @@
             this.Controls.Add(this.labelControl2);
             this.Controls.Add(this.labelControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(430, 427);
+            this.MaximumSize = new System.Drawing.Size(430, 419);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(422, 427);
+            this.MinimumSize = new System.Drawing.Size(430, 419);
             this.Name = "Form_InputType";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Data Type...";

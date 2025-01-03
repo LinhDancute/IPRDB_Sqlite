@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
-namespace IPRDB_Sqlite.BLL
+namespace PRDB_Sqlite.BLL
 {
     public class SelectCondition
     {
@@ -18,126 +21,453 @@ namespace IPRDB_Sqlite.BLL
         public Dictionary<string, bool> dictCon = new Dictionary<string, bool>();
         public List<ConditionModel> conditionModels = new List<ConditionModel>();
         public string[] subCondition;
+        public ProbDatabase probDatabase { get; set; }
 
         public SelectCondition()
         {
-            // TODO: Complete member initialization
+            dictProb = new Dictionary<string, bool>();
+            dictCon = new Dictionary<string, bool>();
+            conditionModels = new List<ConditionModel>();
+            Attributes = new List<ProbAttribute>();
+            MessageError = string.Empty;
         }
-        public SelectCondition(ProbRelation probRelation, string conditionString)
+        public SelectCondition(ProbRelation probRelation, string conditionString, ProbDatabase probDatabase)
         {
-            // TODO: Complete member initialization
-            relations = probRelation;
-
-            int i = 0;
-            while (i < conditionString.Length - 1)
-            {
-                if (conditionString[i] == '<' && conditionString[i + 1] != '=')
-                    conditionString = conditionString.Insert(i++, "_");
-                if (conditionString[i] == '>' && conditionString[i + 1] != '=')
-                    conditionString = conditionString.Insert(i++, "_");
-                if (conditionString[i] == '=' && conditionString[i - 1] != '!' && conditionString[i - 1] != '<' && conditionString[i - 1] != '>')
-                    conditionString = conditionString.Insert(i++, "_");
-                i++;
-            }
+            this.relations = probRelation;
             this.conditionString = conditionString.Trim();
             this.Attributes = probRelation.Scheme.Attributes;
+            this.probDatabase = probDatabase; // Assign probDatabase
             this.MessageError = string.Empty;
+            dictProb = new Dictionary<string, bool>();
+            dictCon = new Dictionary<string, bool>();
+            conditionModels = new List<ConditionModel>();
+
+            // Standardize condition string
+            int i = 0;
+            while (i < this.conditionString.Length - 1)
+            {
+                if (this.conditionString[i] == '<' && this.conditionString[i + 1] != '=')
+                    this.conditionString = this.conditionString.Insert(i++, "_");
+                if (this.conditionString[i] == '>' && this.conditionString[i + 1] != '=')
+                    this.conditionString = this.conditionString.Insert(i++, "_");
+                if (this.conditionString[i] == '=' && this.conditionString[i - 1] != '!' && this.conditionString[i - 1] != '<' && this.conditionString[i - 1] != '>')
+                    this.conditionString = this.conditionString.Insert(i++, "_");
+                i++;
+            }
         }
 
         #region kiểm tra bộ có thỏa mãn điều kiện chọn
+
+
+        //public bool Satisfied(ProbTuple tuple)
+        //{
+        //    this.tuple = tuple;
+
+        //    foreach (var condition in conditionModels)
+        //    {
+        //        bool isConditionSatisfied = false;
+
+        //        foreach (var t in tuple.Triples)
+        //        {
+        //            for (int i = 0; i < t.Values.Count; i++)
+        //            {
+        //                string tripleValue = t.Values[i]?.ToString().Trim();
+        //                double minProb = t.MinProbs[i];
+        //                double maxProb = t.MaxProbs[i];
+
+        //                Debug.WriteLine($"Checking value: {tripleValue}, Probabilities: [{minProb}, {maxProb}]");
+
+        //                string conditionValue = condition.StrategyModels[0].AttributeValue.Trim();
+        //                string opratorStr = condition.StrategyModels[0].OperatorStrOfTriple;
+        //                string typename = "string";
+
+        //                bool isValueMatch = CompareTriple(tripleValue, conditionValue, opratorStr, typename);
+
+        //                if (opratorStr != "⊗_ig")
+        //                {
+        //                    // Basic range filtering for simple queries
+        //                    bool isProbMatch = condition.MinProb <= minProb && condition.MaxProb >= maxProb;
+
+        //                    if (isValueMatch && isProbMatch)
+        //                    {
+        //                        Debug.WriteLine($"Condition satisfied: Value={tripleValue}, MinProb={minProb}, MaxProb={maxProb}");
+        //                        isConditionSatisfied = true;
+        //                        break;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    // Handle ⊗_ig operator
+        //                    double minProbCondition = condition.MinProb ?? 0.0; // Default to 0.0 if null
+        //                    double maxProbCondition = condition.MaxProb ?? 1.0; // Default to 1.0 if null
+
+        //                    // Combine probabilities for ⊗_ig
+        //                    bool isProbMatch = CombineProbabilityIntervals(
+        //                        "⊗_ig",
+        //                        minProbCondition,
+        //                        maxProbCondition,
+        //                        minProb,
+        //                        maxProb,
+        //                        out double combinedMinProb,
+        //                        out double combinedMaxProb
+        //                    ) && combinedMinProb >= 0.3 && combinedMaxProb <= 1;
+
+        //                    if (isValueMatch && isProbMatch)
+        //                    {
+        //                        Debug.WriteLine($"Condition satisfied: CombinedMinProb={combinedMinProb}, CombinedMaxProb={combinedMaxProb}");
+        //                        isConditionSatisfied = true;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+
+        //            if (isConditionSatisfied)
+        //                break;
+        //        }
+
+        //        if (!isConditionSatisfied)
+        //        {
+        //            Debug.WriteLine("Condition evaluation failed.");
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+
+
+
+
         public bool Satisfied(ProbTuple tuple)
         {
             this.tuple = tuple;
-            dictProb = new Dictionary<string, bool>();
-            dictCon = new Dictionary<string, bool>();
 
-            CalculateConditionProb();
-
-            CalculateConditionStr(subCondition);
-            var listConditionProb = GetArrayCondition(this.conditionString);
-            if (listConditionProb == null)
+            foreach (var condition in conditionModels)
             {
+                if (EvaluateCondition(tuple, condition))
+                {
+                    // For "OR", if any condition passes, the tuple is valid
+                    return true;
+                }
+            }
+
+            // If no conditions pass, the tuple is invalid
+            return false;
+        }
+
+
+        private bool EvaluateCondition(ProbTuple tuple, ConditionModel condition)
+        {
+            string targetColumn = condition.StrategyModels[0].AttributeName.ToLower();
+
+            int targetIndex = FindColumnIndex(targetColumn);
+            if (targetIndex == -1)
+            {
+                Debug.WriteLine($"Column '{targetColumn}' not found.");
                 return false;
             }
 
-            return CalculateTotalCondition(listConditionProb);
+            var t = tuple.Triples[targetIndex];
+
+            // Handle composite conditions with ⊗_ig or sequential AND logic
+            if (condition.StrategyModels[0].OperatorStrOfTriple.Contains("⊗_ig"))
+            {
+                return ValidateCompositeTriple(t, condition);
+            }
+
+            return ValidateTriple(t, condition);
+        }
+
+
+        private int FindColumnIndex(string targetColumn)
+        {
+            return relations.Scheme.Attributes.FindIndex(attr =>
+                attr.AttributeName.Equals(targetColumn, StringComparison.OrdinalIgnoreCase) ||
+                attr.AttributeName.EndsWith($".{targetColumn}", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool ValidateCompositeTriple(ProbTriple triple, ConditionModel condition)
+        {
+            // Initialize composite probabilities
+            double compositeMin = 0.0;
+            double compositeMax = 1.0;
+
+            // Iterate through all values and calculate combined probabilities
+            for (int i = 0; i < triple.Values.Count; i++)
+            {
+                string tripleValue = triple.Values[i]?.ToString().Trim();
+                double minProb = triple.MinProbs[i];
+                double maxProb = triple.MaxProbs[i];
+
+                if (IsValueValid(tripleValue, condition, minProb, maxProb))
+                {
+                    // Combine probabilities using ⊗_ig
+                    var combinedProbs = CombineProbabilities(compositeMin, compositeMax, minProb, maxProb);
+                    compositeMin = combinedProbs[0];
+                    compositeMax = combinedProbs[1];
+                }
+            }
+
+            Debug.WriteLine($"Composite Probabilities After ⊗_ig: Min={compositeMin}, Max={compositeMax}");
+
+            // Validate cumulative probabilities
+            if (compositeMin < condition.MinProb || compositeMax > condition.MaxProb)
+            {
+                Debug.WriteLine("Tuple invalid due to composite probabilities.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateTriple(ProbTriple triple, ConditionModel condition)
+        {
+            double cumulativeMinProb = 0.0;
+            double cumulativeMaxProb = 0.0;
+
+            var validValues = new List<object>();
+            var validMinProbs = new List<double>();
+            var validMaxProbs = new List<double>();
+
+            for (int i = 0; i < triple.Values.Count; i++)
+            {
+                string tripleValue = triple.Values[i]?.ToString().Trim();
+                double minProb = triple.MinProbs[i];
+                double maxProb = triple.MaxProbs[i];
+
+                if (IsValueValid(tripleValue, condition, minProb, maxProb))
+                {
+                    validValues.Add(triple.Values[i]);
+                    validMinProbs.Add(minProb);
+                    validMaxProbs.Add(maxProb);
+
+                    cumulativeMinProb = Math.Min(1, cumulativeMinProb + minProb);
+                    cumulativeMaxProb = Math.Min(1, cumulativeMaxProb + maxProb);
+                }
+            }
+
+            Debug.WriteLine($"Cumulative Probabilities: Min={cumulativeMinProb}, Max={cumulativeMaxProb}");
+
+            if (cumulativeMinProb < condition.MinProb || cumulativeMaxProb > condition.MaxProb)
+            {
+                Debug.WriteLine("Tuple invalid due to cumulative probabilities.");
+                return false;
+            }
+
+            // Update triple with valid values
+            triple.Values = validValues;
+            triple.MinProbs = validMinProbs;
+            triple.MaxProbs = validMaxProbs;
+
+            return true;
+        }
+
+        private double[] CombineProbabilities(double l1, double u1, double l2, double u2)
+        {
+            double combinedMin = Math.Max(0, l1 + l2 - 1);
+            double combinedMax = Math.Min(u1, u2);
+
+            return new double[] { combinedMin, combinedMax };
+        }
+
+        private bool IsValueValid(string value, ConditionModel condition, double minProb, double maxProb)
+        {
+            string operatorStr = condition.StrategyModels[0].OperatorStrOfTriple;
+            string conditionValue = condition.StrategyModels[0].AttributeValue.Trim();
+
+            if (double.TryParse(value, out double numericValue) &&
+                double.TryParse(conditionValue, out double conditionNumericValue))
+            {
+                if (!DoubleCompare(numericValue, conditionNumericValue, operatorStr))
+                {
+                    Debug.WriteLine($"Value invalid: {numericValue} {operatorStr} {conditionNumericValue}");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!CompareTriple(value, conditionValue, operatorStr, "string"))
+                {
+                    Debug.WriteLine($"String comparison failed: {value} {operatorStr} {conditionValue}");
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void ProcessConditionString()
         {
             string conditionStr = this.conditionString;
-            string[] subConditionHaveProbability;
 
-            Regex regexPro = new Regex(@"\([^\(\)]+\)\[[^\(\)]+\]");
+            // Regex for simple conditions
+            string simpleConditionPattern = @"\(\s*([a-zA-Z0-9._]+)\s*([><=!_]+)\s*(['""]?[a-zA-Z0-9._\s]+['""]?|[\d.]+)\s*\)\s*\[\s*([\d.]+)\s*,\s*([\d.]+)\s*\]";
+            Regex regexSimple = new Regex(simpleConditionPattern);
 
-            var conditionProbabilities = regexPro.Matches(conditionStr);
-            subConditionHaveProbability = new string[conditionProbabilities.Count];
-            //create subcondition array
-            for (int i = 0; i < conditionProbabilities.Count; i++)
+            // Check whether the condition contains "OR" or "AND"
+            bool isOrQuery = conditionStr.Contains("or");
+            bool isAndQuery = conditionStr.Contains("and");
+
+            // Handle "OR" logic
+            if (isOrQuery)
             {
-                subConditionHaveProbability[i] = conditionProbabilities[i].ToString();
-                conditionStr = conditionStr.Replace(conditionProbabilities[i].ToString(), "ConditionProb_" + i.ToString());
-            }
+                // Split the entire condition into "OR" groups
+                var orConditions = conditionStr.Split(new[] { "and" }, StringSplitOptions.RemoveEmptyEntries);
 
-            var count1 = 0;
-            var count2 = 0;
-            var degree = 0;
+                // Initialize a set to store unique results across all "OR" groups
+                HashSet<ProbTuple> finalResults = new HashSet<ProbTuple>();
 
-            // dem so lan va so bac cua ky tu '(' 
-            for (int i = 0; i < conditionStr.Length; i++)
-            {
-                if (conditionStr[i] == '(')
+                foreach (var orCondition in orConditions)
                 {
-                    count1++;
-                    var tmp = 1;
-                    for (int j = i + 1; j < conditionStr.Length; j++)
+                    // Process each "OR" condition independently
+                    var matches = regexSimple.Matches(orCondition);
+
+                    if (matches.Count > 0)
                     {
-                        if (conditionStr[j] == '(')
-                            tmp++;
-                        if (conditionStr[j] == ')') break;
+                        Debug.WriteLine($"Processing OR Condition: {orCondition}");
+
+                        // Handle matches for the current "OR" condition
+                        HandleMatches(matches, ref conditionStr);
+
+                        // Filter tuples for the current "OR" condition
+                        HashSet<ProbTuple> currentResults = new HashSet<ProbTuple>(
+                            relations.Tuples.Where(tuple =>
+                            {
+                                this.tuple = tuple;
+                                return Satisfied(tuple);
+                            })
+                        );
+
+                        // Add the results of this "OR" condition to the final results (union)
+                        finalResults.UnionWith(currentResults);
                     }
-                    degree = degree >= tmp ? degree : tmp;
-                }
-                if (conditionStr[i] == ')') count2++;
+                    else
+                    {
+                        this.MessageError = "Invalid condition format.";
+                        return;
+                    }
+                
             }
 
-            if (count1 != count2)
-            {
-                MessageError = string.Format("Incorrect syntax near the keyword.");
-                return;
+                // Update the final results after evaluating all "OR" conditions
+                relations.Tuples = finalResults.ToList();
+                Debug.WriteLine($"Final results filtered by combined OR conditions: {finalResults.Count} tuples.");
             }
-
-            Regex regexCondition = new Regex(@"\([^\(\)]+\)");
-
-
-            var totalLength = GetTotalSubCondition(conditionStr, degree, regexCondition);
-            subCondition = new string[totalLength];
-
-            var timeCondition = 0;
-            //creatre group condition array 
-            for (int i = 0; i < degree; i++)
+            // Handle "AND" logic
+            else if (isAndQuery)
             {
-                var listCondition = regexCondition.Matches(conditionStr);
+                // "AND" Logic
+                Debug.WriteLine("Processing AND conditions...");
 
-                for (int j = 0; j < listCondition.Count; j++)
+                // Split the condition into "AND" groups
+                var andConditions = conditionStr.Split(new[] { "and" }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Initialize a set for the intersection of "AND" conditions
+                HashSet<ProbTuple> finalResults = new HashSet<ProbTuple>(relations.Tuples);
+
+                foreach (var andCondition in andConditions)
                 {
-                    var tmp = listCondition[j].ToString();
-                    tmp = tmp.Remove(0, 1);
-                    tmp = tmp.Remove(tmp.Length - 1, 1);
-                    subCondition[j] = tmp;
+                    // Process each "AND" condition independently
+                    var matches = regexSimple.Matches(andCondition);
 
-                    conditionStr = conditionStr.Replace(listCondition[i].ToString(), "Condition_" + timeCondition.ToString());
-                    timeCondition++;
+                    if (matches.Count > 0)
+                    {
+                        Debug.WriteLine($"Processing AND Condition: {andCondition}");
+
+                        // Handle matches for the current "AND" condition
+                        HandleMatches(matches, ref conditionStr);
+
+                        // Filter tuples for the current "AND" condition
+                        HashSet<ProbTuple> currentResults = new HashSet<ProbTuple>(
+                            relations.Tuples.Where(tuple =>
+                            {
+                                this.tuple = tuple;
+                                return Satisfied(tuple);
+                            })
+                        );
+
+                        Debug.WriteLine($"Current Results for AND Condition: {currentResults.Count} tuples.");
+
+                        // Intersect the current results with the final results
+                        finalResults.IntersectWith(currentResults);
+                    }
+                    else
+                    {
+                        this.MessageError = "Invalid condition format.";
+                        return;
+                    }
+                }
+
+                // Update the final results after evaluating all "AND" conditions
+                relations.Tuples = finalResults.ToList();
+                Debug.WriteLine($"Final results filtered by combined AND conditions: {finalResults.Count} tuples.");
+            }
+            else
+            {
+                // Handle single conditions
+                Debug.WriteLine("Processing single condition...");
+                var matches = regexSimple.Matches(conditionStr);
+
+                if (matches.Count > 0)
+                {
+                    Debug.WriteLine($"Processing Single Condition: {conditionStr}");
+
+                    // Handle matches for the single condition
+                    HandleMatches(matches, ref conditionStr);
+
+                    // Filter tuples for the single condition
+                    relations.Tuples = relations.Tuples.Where(tuple =>
+                    {
+                        this.tuple = tuple;
+                        return Satisfied(tuple);
+                    }).ToList();
+
+                    Debug.WriteLine($"Final results filtered by single condition: {relations.Tuples.Count} tuples.");
+                }
+                else
+                {
+                    this.MessageError = "Invalid condition format.";
+                    return;
                 }
             }
+        }
 
-            this.conditionString = conditionStr;
+        
 
-            if (subConditionHaveProbability.Count() > 0)
+
+
+
+
+
+
+
+
+
+        // Helper method to handle matches
+        private void HandleMatches(MatchCollection matches, ref string conditionStr)
+        {
+            var allMatches = new List<string>();
+            foreach (Match match in matches)
+            {
+                allMatches.Add(match.Value);
+            }
+
+            // Extract and replace conditions with placeholders
+            string[] subConditionHaveProbability = allMatches.ToArray();
+            for (int i = 0; i < subConditionHaveProbability.Length; i++)
+            {
+                Debug.WriteLine($"Matched Condition: {subConditionHaveProbability[i]}");
+                conditionStr = conditionStr.Replace(subConditionHaveProbability[i], $"ConditionProb_{i}");
+            }
+
+            // Convert subconditions with probabilities into models
+            if (subConditionHaveProbability.Length > 0)
             {
                 ConvertStringToModel(subConditionHaveProbability);
             }
         }
+
 
         private static int GetTotalSubCondition(string conditionStr, int degree, Regex regexCondition)
         {
@@ -354,162 +684,73 @@ namespace IPRDB_Sqlite.BLL
             return minProd <= minProbOne && maxProbOne <= maxProb;
         }
 
+       
+
         public void ConvertStringToModel(string[] subConditionHaveProbability)
         {
-            subConditionHaveProbability = subConditionHaveProbability.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-            for (int i = 0; i < subConditionHaveProbability.Count(); i++)
+            try
             {
-                try
+                conditionModels.Clear(); // Clear previous conditions
+                foreach (var conditionString in subConditionHaveProbability)
                 {
-                    if (!subConditionHaveProbability[i].Contains("(") && !subConditionHaveProbability[i].Contains("(") && !subConditionHaveProbability[i].Contains("[") && !subConditionHaveProbability[i].Contains("]"))
+                    Debug.WriteLine($"Converting SubCondition: {conditionString}");
+
+                    // Regex to parse both simple and composite conditions
+                    string pattern = @"\(\s*([a-zA-Z0-9._]+)\s*([><=!_]+)\s*(['""]?[a-zA-Z0-9._\s]+['""]?|\d+(\.\d+)?)\s*"
+                                   + @"(⊗_ig|⊕_ig|⊗_in|⊕_in|⊗_me|⊕_me)?\s*"
+                                   + @"\(?([a-zA-Z0-9._]+)?\s*([><=!_]+)?\s*(['""]?[a-zA-Z0-9._\s]+['""]?)?\)?"
+                                   + @"\[\s*(\d+(\.\d+)?)\s*,\s*(\d+(\.\d+)?)\s*\]";
+
+                    var match = Regex.Match(conditionString, pattern);
+
+                    if (match.Success)
                     {
-                        MessageError = "Incorrect syntax near 'where'.";
-                        return;
-                    }
+                        string attributeName = match.Groups[1].Value.Trim();
+                        string operatorStr = match.Groups[2].Value.Trim();
+                        string attributeValue = match.Groups[3].Value.Trim().Trim('\'', '"');
+                        string compositeOperator = match.Groups[5].Value.Trim(); // Composite operator (e.g., ⊗_ig)
+                        string secondaryAttributeName = match.Groups[6].Value.Trim(); // Secondary attribute (if composite)
+                        string secondaryOperator = match.Groups[7].Value.Trim(); // Secondary operator
+                        string secondaryValue = match.Groups[8].Value.Trim().Trim('\'', '"'); // Secondary value
+                        double minProb = double.Parse(match.Groups[9].Value.Trim());
+                        double maxProb = double.Parse(match.Groups[11].Value.Trim());
 
-                    var j1 = subConditionHaveProbability[i].IndexOf('(');
-                    var j2 = subConditionHaveProbability[i].IndexOf(')');
-                    var j3 = subConditionHaveProbability[i].IndexOf('[');
-                    var j4 = subConditionHaveProbability[i].LastIndexOf(',');
-                    var j5 = subConditionHaveProbability[i].IndexOf(']');
+                        Debug.WriteLine($"Parsed Attribute: {attributeName}, Operator: {operatorStr}, Value: {attributeValue}, CompositeOperator: {compositeOperator}, Secondary Attribute: {secondaryAttributeName}, Secondary Operator: {secondaryOperator}, Secondary Value: {secondaryValue}, MinProb: {minProb}, MaxProb: {maxProb}");
 
-                    var minProb = double.Parse(subConditionHaveProbability[i].Substring(j3 + 1, j4 - j3 - 1));
-                    var maxProb = double.Parse(subConditionHaveProbability[i].Substring(j4 + 1, j5 - j4 - 1));
-                    var valueString = subConditionHaveProbability[i].Substring(j1 + 1, j2 - j1 - 1);
-
-
-                    var listStrategyModel = new List<StrategyModel>();
-                    if (!string.IsNullOrEmpty(IsOperatiorStrategy(valueString)))
+                        // Add parsed condition to the list
+                        conditionModels.Add(new ConditionModel
+                        {
+                            StrategyModels = new List<StrategyModel>
                     {
-                        var listOperatorStrategy = new List<string>();
-
-                        var listStrategy = valueString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        int totalStrategy = 0;
-
-                        foreach (var item in listStrategy)
+                        new StrategyModel
                         {
-                            if (!string.IsNullOrEmpty(IsOperatiorStrategy(item)))
-                            {
-                                totalStrategy++;
-                            }
+                            AttributeName = attributeName,
+                            OperatorStrOfTriple = compositeOperator == string.Empty ? operatorStr : $"{operatorStr} {compositeOperator} {secondaryOperator}",
+                            AttributeValue = compositeOperator == string.Empty ? attributeValue : $"{attributeValue} {secondaryOperator} {secondaryValue}"
                         }
-
-                        string[] listConditionStrategy = new string[(totalStrategy * 2) + 1];
-                        var tmp = 0;
-                        var isStringValue = false;
-                        for (int k = 0; k < listStrategy.Length; k++)
-                        {
-                            if (!string.IsNullOrEmpty(IsOperatiorStrategy(listStrategy[k])))
-                            {
-                                tmp++;
-                                listConditionStrategy[tmp] = listStrategy[k];
-                                tmp++;
-                            }
-                            else
-                            {
-                                if (listStrategy[k].StartsWith("'") && !listStrategy[k].EndsWith("'"))
-                                {
-                                    isStringValue = true;
-                                }
-
-                                if (!listStrategy[k].StartsWith("'") && listStrategy[k].EndsWith("'"))
-                                {
-                                    isStringValue = false;
-                                }
-
-                                if (isStringValue)
-                                {
-                                    listStrategy[k] = listStrategy[k] + " ";
-                                }
-
-                                listConditionStrategy[tmp] += listStrategy[k];
-                            }
-                        }
-
-                        for (int l = 0; l < listConditionStrategy.Length; l++)
-                        {
-                            var checkStrategy = IsOperatiorStrategy(listConditionStrategy[l]);
-                            if (string.IsNullOrEmpty(checkStrategy))
-                            {
-                                var operatorStrTwo = IsOperatior(listConditionStrategy[l]);
-                                if (!string.IsNullOrEmpty(operatorStrTwo))
-                                {
-                                    string[] seperatorTwo = { operatorStrTwo };
-                                    string[] attributeTwo = listConditionStrategy[l].Split(seperatorTwo, StringSplitOptions.RemoveEmptyEntries);
-                                    if (attributeTwo.Length != 2)
-                                    {
-                                        MessageError = string.Format("Incorrect syntax near the keyword {0}.", listConditionStrategy[l]);
-                                        return;
-                                    }
-
-                                    listStrategyModel.Add(new StrategyModel { AttributeName = attributeTwo[0], AttributeValue = attributeTwo[1], OperatorStrOfTriple = operatorStrTwo });
-                                }
-                                else
-                                {
-                                    MessageError = string.Format("Incorrect syntax near the keyword {0}.", listConditionStrategy[l]);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                listOperatorStrategy.Add(listConditionStrategy[l]);
-                            }
-                        }
-
-                        var model = new ConditionModel
-                        {
-                            StrategyModels = listStrategyModel,
-                            OperatorStrategy = listOperatorStrategy,
-                            MaxProb = maxProb,
-                            MinProb = minProb
-                        };
-
-                        conditionModels.Add(model);
+                    },
+                            MinProb = minProb,
+                            MaxProb = maxProb
+                        });
                     }
                     else
                     {
-                        var operatorStrOfTriple = IsOperatior(valueString);
-                        if (string.IsNullOrEmpty(operatorStrOfTriple))
-                        {
-                            MessageError = string.Format("Incorrect syntax near the keyword {0}.", valueString);
-                            return;
-                        }
-                        string[] seperator = { operatorStrOfTriple };
-                        string[] attribute = valueString.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (attribute.Count() != 2)
-                        {
-                            MessageError = string.Format("Incorrect syntax near the keyword {0}.", operatorStrOfTriple);
-                            return;
-                        }
-                        var attributeName = attribute[0];
-                        var attributeValue = attribute[1];
-
-                        listStrategyModel.Add(new StrategyModel
-                        {
-                            AttributeName = attributeName.Trim(),
-                            AttributeValue = attributeValue.Trim(),
-                            OperatorStrOfTriple = operatorStrOfTriple.Trim()
-                        });
-
-                        var model = new ConditionModel
-                        {
-                            StrategyModels = listStrategyModel,
-                            MaxProb = maxProb,
-                            MinProb = minProb
-                        };
-
-                        conditionModels.Add(model);
+                        Debug.WriteLine("Failed to parse subcondition: " + conditionString);
                     }
                 }
-                catch
-                {
-                    MessageError = "Incorrect syntax near 'where'.";
-                    return;
-                }
+
+                Debug.WriteLine($"Total Parsed Conditions: {conditionModels.Count}");
+            }
+            catch (Exception ex)
+            {
+                MessageError = $"Error parsing condition: {ex.Message}";
+                Debug.WriteLine(MessageError);
             }
         }
+
+
+
+
 
         private void CalculateConditionStr(string[] subCondition)
         {
@@ -694,132 +935,136 @@ namespace IPRDB_Sqlite.BLL
             }
         }
 
-        private bool GetProbIntervalV2(string valueOne, string valueTwo, string operaterStr, double? maxProbOfCon = null, double? minProbOfCon = null)
+        private bool GetProbIntervalV2(string valueOne, string valueTwo, string operatorStr, double? maxProbOfCon = null, double? minProbOfCon = null)
         {
-            double minProb = 0, maxProb = 0;
-            int indexOne, countTripleOne;
-            ProbTuple tuple = this.tuple;
-
-            try
+            Debug.WriteLine($"Evaluating condition: {valueOne} {operatorStr} {valueTwo} with Prob Interval [{minProbOfCon}, {maxProbOfCon}]");
+            int indexOne = this.IndexOfAttribute(valueOne);
+            if (indexOne == -1)
             {
-                if (SelectCondition.isCompareOperator(operaterStr))     // Biểu thức so sánh giữa một thuộc tính với một giá trị
+                this.MessageError = $"Attribute '{valueOne}' not found.";
+                Debug.WriteLine(this.MessageError);
+                return false;
+            }
+
+            ProbTuple tuple = this.tuple;
+            var listValue = tuple.Triples[indexOne].Values;
+            var minProbs = tuple.Triples[indexOne].MinProbs;
+            var maxProbs = tuple.Triples[indexOne].MaxProbs;
+
+            for (int i = 0; i < listValue.Count; i++)
+            {
+                string tupleValue = listValue[i]?.ToString().ToLower();
+                string conditionValue = valueTwo.ToLower();
+
+                Debug.WriteLine($"Checking tuple value: {tupleValue}, Probabilities: [{minProbs[i]}, {maxProbs[i]}]");
+
+                if (CompareTriple(tupleValue, conditionValue, operatorStr, "string"))
                 {
-                    indexOne = this.IndexOfAttribute(valueOne); // vị trí của thuộc tính trong ds các thuộc tính
-                    if (indexOne == -1)
-                        return false;
+                    double currentMinProb = minProbs[i];
+                    double currentMaxProb = maxProbs[i];
 
-                    if (valueTwo.Contains("'"))
+                    if (minProbOfCon.HasValue && maxProbOfCon.HasValue)
                     {
-
-                        int count = valueTwo.Split(new char[] { '\'' }).Length - 1;
-
-
-                        if (valueTwo.Substring(0, 1) != "'")
+                        if (currentMinProb >= minProbOfCon.Value && currentMaxProb <= maxProbOfCon.Value)
                         {
-                            MessageError = "Unclosed quotation mark before the character string " + valueTwo;
-                            return false;
+                            Debug.WriteLine("Condition satisfied with probabilities.");
+                            return true;
                         }
-
-                        if (valueTwo.Substring(valueTwo.Length - 1, 1) != "'")
-                        {
-                            MessageError = "Unclosed quotation mark after the character string " + valueTwo;
-                            return false;
-                        }
-
-
-                        if (count != 2)
-                        {
-                            MessageError = "Unclosed quotation mark at the character string " + valueTwo;
-                            return false;
-                        }
-
-                        valueTwo = valueTwo.Remove(0, 1);
-                        valueTwo = valueTwo.Remove(valueTwo.Length - 1, 1);
-                    }
-
-                    #region ProbDataType
-                    ProbDataType dataType = new ProbDataType();
-                    dataType.TypeName = Attributes[indexOne].Type.TypeName;
-                    dataType.DataType = Attributes[indexOne].Type.DataType;
-                    dataType.Domain = Attributes[indexOne].Type.Domain;
-                    dataType.DomainString = Attributes[indexOne].Type.DomainString;
-                    #endregion
-
-                    if (!dataType.CheckDataTypeOfVariables(valueTwo))
-                    {
-                        MessageError = String.Format("Conversion failed when converting the varchar value {0} to data type {1}.", valueTwo, dataType.DataType);
-                        return false;
-                    }
-
-                    #region ProbDataType
-                    countTripleOne = tuple.Triples[indexOne].Value.Count; // số lượng các cặp xác xuất trong thuộc tính
-                    var listValue = tuple.Triples[indexOne].Value;
-                    var minProbV = tuple.Triples[indexOne].MinProb;
-                    var maxProbV = tuple.Triples[indexOne].MaxProb;
-                    #endregion
-
-                    if (maxProbV == 1 && minProbV == 1 && !maxProbOfCon.HasValue && !minProbOfCon.HasValue)
-                    {
-                        var kp = listValue.Any(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName));
-                        return kp;
                     }
                     else
                     {
-                        var count = listValue.Where(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName)).Count();
-                        if (count > 0)
-                        {
-                            minProb = (count / (float)countTripleOne) * minProbV;
-                            maxProb = (count / (float)countTripleOne) * maxProbV;
-
-                            if (maxProbOfCon.HasValue && minProbOfCon.HasValue)
-                            {
-                                return minProbOfCon.Value <= minProb && maxProb <= maxProbOfCon;
-                            }
-                        }
-                        return false;
+                        Debug.WriteLine("Condition satisfied without probability constraints.");
+                        return true;
                     }
                 }
-                else                     // Biểu thức kết hợp giữa hai khoảng xác suất
+            }
+
+            Debug.WriteLine("No matching value found.");
+            return false;
+        }
+
+
+        private string HandleQuotedString(string value)
+        {
+            if (value.Contains("'"))
+            {
+                int count = value.Count(c => c == '\'');
+                if (value[0] != '\'' || value[value.Length - 1] != '\'' || count != 2)
                 {
-                    double minProbOne, minProbTwo, maxProbOne, maxProbTwo;
-                    string[] StrProb;
-
-                    valueOne = valueOne.Replace("[", "");  // [L,U]
-                    valueOne = valueOne.Replace("]", "");
-
-                    StrProb = valueOne.Split(',');
-                    minProbOne = Convert.ToDouble(StrProb[0]);
-                    maxProbOne = Convert.ToDouble(StrProb[1]);
-
-                    valueTwo = valueTwo.Replace("[", "");  // [L,U]
-                    valueTwo = valueTwo.Replace("]", "");
-
-                    StrProb = valueTwo.Split(',');
-                    minProbTwo = Convert.ToDouble(StrProb[0]);
-                    maxProbTwo = Convert.ToDouble(StrProb[1]);
-
-                    switch (operaterStr)
-                    {
-                        case "⊗_ig": minProb = Math.Max(0, minProbOne + minProbTwo - 1); maxProb = Math.Min(maxProbOne, maxProbTwo); break;
-                        case "⊗_in": minProb = minProbOne * minProbTwo; maxProb = maxProbOne * maxProbTwo; break;
-                        case "⊗_me": minProb = 0; maxProb = 0; break;
-                        case "⊕_ig": minProb = Math.Max(minProbOne, minProbTwo); maxProb = Math.Min(1, maxProbOne + maxProbTwo); break;
-                        case "⊕_in": minProb = minProbOne + minProbTwo - (minProbOne * minProbTwo); maxProb = maxProbOne + maxProbTwo - (maxProbOne * maxProbTwo); break;
-                        case "⊕_me": minProb = Math.Min(1, minProbOne + minProbTwo); maxProb = Math.Min(1, maxProbOne + maxProbTwo); break;
-                        default:
-                            MessageError = "Incorrect syntax near 'where'.";
-                            break;
-
-                    }
+                    MessageError = "Unclosed quotation mark in the string '" + value + "'.";
+                    return null;
                 }
+
+                return value.Trim('\'');
+            }
+
+            return value;
+        }
+
+        private bool TryParseInterval(string interval, out double minProb, out double maxProb)
+        {
+            minProb = 0;
+            maxProb = 0;
+
+            try
+            {
+                string[] parts = interval.Trim('[', ']').Split(',');
+                if (parts.Length != 2) return false;
+
+                minProb = Convert.ToDouble(parts[0]);
+                maxProb = Convert.ToDouble(parts[1]);
+
+                return true;
             }
             catch
             {
-                MessageError = "Incorrect syntax near 'where'.";
                 return false;
             }
-            return false;
         }
+
+        private bool CombineProbabilityIntervals(string operatorStr, double minProbOne, double maxProbOne, double minProbTwo, double maxProbTwo, out double minProb, out double maxProb)
+        {
+            minProb = 0;
+            maxProb = 0;
+
+            switch (operatorStr)
+            {
+                case "⊗_ig":
+                    minProb = Math.Max(0, minProbOne + minProbTwo - 1); // Lower bound
+                    maxProb = Math.Min(maxProbOne, maxProbTwo);         // Upper bound
+                    return true;
+
+                case "⊗_in":
+                    minProb = minProbOne * minProbTwo;
+                    maxProb = maxProbOne * maxProbTwo;
+                    return true;
+
+                case "⊗_me":
+                    minProb = 0;
+                    maxProb = 0;
+                    return true;
+
+                case "⊕_ig":
+                    minProb = Math.Max(minProbOne, minProbTwo);
+                    maxProb = Math.Min(1, maxProbOne + maxProbTwo);
+                    return true;
+
+                case "⊕_in":
+                    minProb = minProbOne + minProbTwo - (minProbOne * minProbTwo);
+                    maxProb = maxProbOne + maxProbTwo - (maxProbOne * maxProbTwo);
+                    return true;
+
+                case "⊕_me":
+                    minProb = Math.Min(1, minProbOne + minProbTwo);
+                    maxProb = Math.Min(1, maxProbOne + maxProbTwo);
+                    return true;
+
+                default:
+                    Debug.WriteLine($"Unsupported operator: {operatorStr}");
+                    return false;
+            }
+        }
+
 
         private List<double> GetProbIntervalV3(string valueOne, string valueTwo, string operaterStr)
         {
@@ -851,7 +1096,6 @@ namespace IPRDB_Sqlite.BLL
                             return null;
                         }
 
-
                         if (count != 2)
                         {
                             MessageError = "Unclosed quotation mark at the character string " + valueTwo;
@@ -870,6 +1114,7 @@ namespace IPRDB_Sqlite.BLL
                     dataType.DomainString = Attributes[indexOne].Type.DomainString;
                     #endregion
 
+                    // Kiểm tra dữ liệu có thể chuyển đổi được không
                     if (!dataType.CheckDataTypeOfVariables(valueTwo))
                     {
                         MessageError = String.Format("Conversion failed when converting the varchar value {0} to data type {1}.", valueTwo, dataType.DataType);
@@ -877,94 +1122,123 @@ namespace IPRDB_Sqlite.BLL
                     }
 
                     #region ProbDataType
-                    countTripleOne = tuple.Triples[indexOne].Value.Count; // số lượng các cặp xác xuất trong thuộc tính
-                    var listValue = tuple.Triples[indexOne].Value;
-                    var minProbV = tuple.Triples[indexOne].MinProb;
-                    var maxProbV = tuple.Triples[indexOne].MaxProb;
+                    countTripleOne = tuple.Triples[indexOne].Values.Count; // số lượng các cặp xác suất trong thuộc tính
+                    var listValue = tuple.Triples[indexOne].Values;
+                    var minProbV = tuple.Triples[indexOne].MinProbs;
+                    var maxProbV = tuple.Triples[indexOne].MaxProbs;
                     #endregion
 
+                    // Lọc danh sách theo điều kiện so sánh và tính toán xác suất
                     var result = listValue.Where(x => CompareTriple(x, valueTwo, operaterStr, dataType.TypeName)).Count();
 
                     if (result > 0)
                     {
-                        minProb = (result / (float)countTripleOne) * minProbV;
-                        maxProb = (result / (float)countTripleOne) * maxProbV;
+                        // Tính toán lại minProb và maxProb
+                        minProb = (result / (float)countTripleOne) * minProbV.Average(); // Lấy trung bình nếu có nhiều giá trị cận dưới
+                        maxProb = (result / (float)countTripleOne) * maxProbV.Average(); // Lấy trung bình nếu có nhiều giá trị cận trên
 
                         return new List<double> { minProb, maxProb };
                     }
                     else
                     {
+                        // Trả về khoảng xác suất nếu không tìm thấy kết quả phù hợp
                         return new List<double> { 0, 0 };
                     }
                 }
 
+                // Trường hợp nếu không phải là biểu thức so sánh
+                MessageError = "Incorrect operator or query structure.";
                 return null;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageError = "Incorrect syntax near 'where'.";
+                // Xử lý lỗi và hiển thị thông báo lỗi chi tiết
+                MessageError = $"Error occurred: {ex.Message}";
                 return null;
             }
         }
 
-        public int IndexOfAttribute(string S)
+
+
+        public int IndexOfAttribute(string attribute)
         {
-            string value = S.Trim().ToLower();
-            int indexAttributeS = -1;
-            if (value.IndexOf(".") != -1)
+            string value = attribute.Trim().ToLower();
+            int indexAttribute = -1;
+
+            try
             {
-                string[] arr = value.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                int count = 0;
-                foreach (string item in this.relations.ListRenameRelation)
+                if (value.Contains("."))
                 {
-                    if (item != arr[0])
-                        count++;
-                }
-                if (count == 2)
-                {
-                    MessageError = String.Format("The multi-part identifier {0} could not be bound.", value);
-                    return -1;
-                }
 
-                for (int i = 0; i < Attributes.Count; i++)
-                {
-                    if (value == Attributes[i].AttributeName.ToLower())
+                    // Split into relation and attribute parts
+                    string[] parts = value.Split('.');
+                    if (parts.Length != 2)
                     {
-                        return i;
+                        MessageError = $"Invalid attribute format '{value}'. Expected format: relation.attribute.";
+                        return -1;
                     }
-                }
 
-                MessageError = String.Format("Invalid attribute name '{0}'.", arr[1]);
+                    string relationName = parts[0].Trim().ToLower();
+                    string attributeName = parts[1].Trim().ToLower();
+
+                    // Find the relation by name
+                    ProbRelation relation = this.probDatabase.Relations
+                        .FirstOrDefault(r => r.RelationName.ToLower() == relationName);
+
+                    if (relation == null)
+                    {
+                        MessageError = $"Invalid relation name '{relationName}'. Please ensure the relation exists in the database.";
+                        return -1;
+                    }
+
+                    // Find the attribute in the relation's schema
+                    indexAttribute = relation.Scheme.Attributes.FindIndex(attr =>
+                        attr.AttributeName.Trim().ToLower() == attributeName);
+
+                    if (indexAttribute == -1)
+                    {
+                        MessageError = $"Invalid attribute name '{attributeName}' in relation '{relationName}'.";
+                        return -1;
+                    }
+
+                    return indexAttribute;
+                }
+                else
+                {
+                    // If no relation is specified, search across all attributes
+                    int matchCount = 0;
+
+                    for (int i = 0; i < Attributes.Count; i++)
+                    {
+                        string[] parts = Attributes[i].AttributeName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (parts.Length == 2 && value == parts[1].ToLower().Trim())
+                        {
+                            matchCount++;
+                            indexAttribute = i;
+                        }
+                    }
+
+                    if (matchCount > 1)
+                    {
+                        MessageError = $"Ambiguous attribute name '{value}'. Specify the relation using relation.attribute format.";
+                        return -1;
+                    }
+
+                    if (matchCount == 0)
+                    {
+                        MessageError = $"Invalid attribute name '{value}'. No matching attribute found.";
+                        return -1;
+                    }
+
+                    return indexAttribute;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageError = $"Error processing attribute '{attribute}': {ex.Message}";
                 return -1;
-
             }
-            else
-            {
-                int count = 0;
-                for (int i = 0; i < Attributes.Count; i++)
-                {
-                    string[] arr = Attributes[i].AttributeName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (value == arr[1].ToLower().Trim())
-                    {
-                        count++;
-                        indexAttributeS = i;
-                    }
-                }
-
-                if (count >= 2)
-                {
-                    MessageError = String.Format("Ambiguous attribute name '{0}'.", value);
-                    return -1;
-                }
-                if (count == 0)
-                {
-                    MessageError = String.Format("Invalid attribute name '{0}'.", value);
-                    return -1;
-                }
-
-                return indexAttributeS;
-            }
-
         }
 
         private static bool CalculationCon(string s1)
@@ -1070,17 +1344,27 @@ namespace IPRDB_Sqlite.BLL
                 default: return false;
             }
         }
-        public static bool StrCompare(string valueOne, string valueTwo, string OpratorStr)
+        private bool StrCompare(string valueOne, string valueTwo, string opratorStr)
         {
+            valueOne = valueOne?.Trim().ToLower();
+            valueTwo = valueTwo?.Trim().ToLower();
 
-            switch (OpratorStr)
+            //Debug.WriteLine($"Comparing strings: ValueOne='{valueOne}', ValueTwo='{valueTwo}', Operator='{opratorStr}'");
+
+            switch (opratorStr)
             {
-                case "_=": return (valueOne.ToLower().CompareTo(valueTwo) == 0);
-                case "!=": return (valueOne.ToLower().CompareTo(valueTwo) != 0);
-                default: return false;
+                case "=":
+                    return string.Equals(valueOne, valueTwo, StringComparison.OrdinalIgnoreCase); // Case-insensitive equality
+                case "!=":
+                    return !string.Equals(valueOne, valueTwo, StringComparison.OrdinalIgnoreCase); // Case-insensitive inequality
+                default:
+                    Debug.WriteLine($"Unsupported string comparison operator: {opratorStr}");
+                    return false;
             }
-
         }
+
+
+
         public static bool DoubleCompare(double valueOne, double valueTwo, string OpratorStr)
         {
             switch (OpratorStr)
@@ -1105,31 +1389,72 @@ namespace IPRDB_Sqlite.BLL
             }
 
         }
+        //public bool CompareTriple(object valueOne, string valueTwo, string opratorStr, string typename)
+        //{
+        //    Debug.WriteLine($"Comparing: ValueOne='{valueOne}', ValueTwo='{valueTwo}', Operator='{opratorStr}', Type='{typename}'");
+
+        //    if (opratorStr == "_=") opratorStr = "=";
+
+        //    switch (typename.ToLower())
+        //    {
+        //        case "int16":
+        //        case "int64":
+        //        case "int32":
+        //        case "byte":
+        //        case "currency":
+        //            return IntCompare(Convert.ToInt16(valueOne), Convert.ToInt16(valueTwo), opratorStr);
+        //        case "string":
+        //        case "datetime":
+        //        case "userdefined":
+        //        case "binary":
+        //            // Handle `_=` as `=` for string comparisons
+        //            if (opratorStr == "_=") opratorStr = "=";
+        //            return StrCompare(valueOne.ToString(), valueTwo, opratorStr);
+        //        case "decimal":
+        //        case "single":
+        //        case "double":
+        //            return DoubleCompare(Convert.ToDouble(valueOne), Convert.ToDouble(valueTwo), opratorStr);
+        //        case "boolean":
+        //            return BoolCompare(Convert.ToBoolean(valueOne), Convert.ToBoolean(valueTwo), opratorStr);
+        //        default:
+        //            Debug.WriteLine("Unsupported type for comparison.");
+        //            return false;
+        //    }
+        //}
         public bool CompareTriple(object valueOne, string valueTwo, string opratorStr, string typename)
         {
-            switch (typename)
-            {
-                case "Int16":
-                case "Int64":
-                case "Int32":
-                case "Byte":
-                case "Currency":
-                    return IntCompare(Convert.ToInt16(valueOne), Convert.ToInt16(valueTwo), opratorStr);
-                case "String":
-                case "DateTime":
-                case "UserDefined":
-                case "Binary":
-                    return StrCompare(valueOne.ToString(), valueTwo, opratorStr);
-                case "Decimal":
-                case "Single":
-                case "Double":
-                    return DoubleCompare(Convert.ToDouble(valueOne), Convert.ToDouble(valueTwo), opratorStr);
-                case "Boolean":
-                    return BoolCompare(Convert.ToBoolean(valueOne), Convert.ToBoolean(valueTwo), opratorStr);
-                default: return false;
-            }
+            Debug.WriteLine($"Comparing: ValueOne='{valueOne}', ValueTwo='{valueTwo}', Operator='{opratorStr}', Type='{typename}'");
 
+            if (opratorStr == "_=") opratorStr = "="; // Normalize `_=` to `=`
+
+            switch (typename.ToLower())
+            {
+                case "string":
+                    valueOne = RemoveDiacritics(valueOne.ToString().Trim().ToLower());
+                    valueTwo = RemoveDiacritics(valueTwo.Trim('\'', '"').ToLower());
+                    return StrCompare(valueOne.ToString(), valueTwo, opratorStr);
+
+                default:
+                    Debug.WriteLine($"Unsupported type for comparison: {typename}");
+                    return false;
+            }
         }
+
+
+        private string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            // Normalize the string to FormD (decomposed) and remove diacritical marks
+            return new string(text
+                .Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray());
+        }
+
+
+
         #endregion
 
     }

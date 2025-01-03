@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace IPRDB_Sqlite.BLL
+namespace PRDB_Sqlite.BLL
 {
-    //Lớp này quản lý các kiểu dữ liệu khác nhau được sử dụng trong PRDB.
-    //Nó xử lý các kiểu dữ liệu định nghĩa trước (ví dụ: Int16, String, Double)
-    //và kiểu dữ liệu do người dùng định nghĩa (có thể có miền giá trị).
-    //Nó bao gồm các phương thức để kiểm tra nếu một giá trị phù hợp với kiểu dữ liệu,
-    //xác thực giá trị miền, và phân tích thông tin kiểu dữ liệu từ chuỗi.
     public class ProbDataType
     {
         #region Properties
@@ -151,20 +146,35 @@ namespace IPRDB_Sqlite.BLL
             {
                 this.GetDataType();
 
+                if (new ProbTriple().isProbTripleValue(value)) // Kiểm tra xem có phải ProbTriple hợp lệ không
+                {
+                    // Nếu là kiểu UserDefined, kiểm tra giá trị trong domain
+                    if (this.DataType == "UserDefined")
+                    {
+                        // Phân tách các triple trong {}
+                        string innerValue = value.Substring(1, value.Length - 2).Trim();
+                        string[] triples = innerValue.Split(new string[] { "), (" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (string triple in triples)
+                        {
+                            string cleanedTriple = triple.Trim('(', ')').Trim();
+                            string[] parts = cleanedTriple.Split(new string[] { ", [" }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if (!CheckDomain(parts[0].Trim())) // Kiểm tra giá trị đầu tiên trong domain
+                                return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                // Kiểm tra các kiểu dữ liệu thông thường
                 if (this.DataType != "String")
                 {
                     value = value.Replace(" ", "");
                 }
 
-                if (value.Contains("{") && value.Contains("}") && value.Contains("[") && value.Contains("]"))
-                {
-                    var j1 = value.IndexOf('{');
-                    var j2 = value.IndexOf('}');
-                    value = value.Substring(j1 + 1, j2 - j1 - 1).Trim();
-                }
-
                 string[] seperator = { "," };
-
                 object[] listValue = value.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (object tem in listValue)
@@ -181,10 +191,6 @@ namespace IPRDB_Sqlite.BLL
                         case "Single": Convert.ToSingle(tem); break;
                         case "Double": Convert.ToDouble(tem); break;
                         case "Boolean": Convert.ToBoolean(tem); break;
-                        case "Binary": return (isBinaryType(tem));
-                        case "Currency": return (isCurrencyType(tem));
-                        case "UserDefined":
-                            return CheckDomain(tem.ToString().Trim());
                         default: break;
                     }
                 }

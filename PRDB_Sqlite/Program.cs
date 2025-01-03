@@ -1,8 +1,8 @@
-﻿using IPRDB_Sqlite.GUI;
+﻿using PRDB_Sqlite.GUI;
 using System;
 using System.Windows.Forms;
 
-namespace IPRDB_Sqlite
+namespace PRDB_Sqlite
 {
     static class Program
     {

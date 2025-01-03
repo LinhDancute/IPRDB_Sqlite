@@ -1,10 +1,10 @@
-﻿using IPRDB_Sqlite.BLL;
+﻿using PRDB_Sqlite.BLL;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Windows.Forms;
 
-namespace IPRDB_Sqlite.DAL
+namespace PRDB_Sqlite.DAL
 {
     public static class DALProbDatabase
     {

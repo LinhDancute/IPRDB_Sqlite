@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace IPRDB_Sqlite.GUI
+namespace PRDB_Sqlite.GUI
 {
     public partial class frm_Rename_DB : DevExpress.XtraEditors.XtraForm
     {

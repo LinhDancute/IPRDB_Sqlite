@@ -1,9 +1,9 @@
-﻿using IPRDB_Sqlite.BLL;
+﻿using PRDB_Sqlite.BLL;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace IPRDB_Sqlite.DAL
+namespace PRDB_Sqlite.DAL
 {
     public static class DALProbScheme
     {

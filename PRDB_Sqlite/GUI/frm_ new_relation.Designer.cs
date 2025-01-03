@@ -1,4 +1,4 @@
-﻿namespace IPRDB_Sqlite.GUI
+﻿namespace PRDB_Sqlite.GUI
 {
     partial class frm__new_relation
     {
